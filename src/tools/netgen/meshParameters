@@ -1,0 +1,46 @@
+int   uselocalh 
+1
+double   maxh 
+0.84
+double   minh 
+0.017
+double   fineness 
+0.5
+double   grading 
+0.3
+double   elementsperedge 
+2
+double   elementspercurve 
+2
+int   closeedgeenable 
+0
+double   closeedgefact 
+2.0
+int   minedgelenenable 
+0
+double   minedgelen 
+0.0001
+int   second_order 
+1
+int   quad_dominated 
+0
+char   meshsize_filename 
+
+int   optsurfmeshenable 
+1
+int   optvolmeshenable 
+1
+int   optsteps_3d 
+3
+int   optsteps_2d 
+3
+int   invert_tets 
+0
+int   invert_trigs 
+0
+int   check_overlap 
+1
+int   check_overlapping_boundary 
+1
+double   deflection 
+0.01

@@ -1,0 +1,6 @@
+{
+    "lmp": "/home/djoroya/projects/DIMAT/01_TECNORED_BRAID_v2/dependences/lammps-rigid/build/lmp",
+    "lsdyna": "/home/djoroya/projects/DIMAT/01_TECNORED_BRAID_v2/dependences/lsprepost4.11_common_gtk3/lspp411_mesa",
+    "calculix": "wine /home/djoroya/projects/DIMAT/01_TECNORED_BRAID_v2/dependences/CalculiX-versions/ccx_static.exe",
+    "netgen": "wine /home/djoroya/projects/DIMAT/01_TECNORED_BRAID_v2/github/src/dependences/NetGen/NetGenMesher.exe"
+}

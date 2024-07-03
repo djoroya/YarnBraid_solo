@@ -1,0 +1,3 @@
+{"lmp": "/usr/bin/lmp",
+ "lsdyna": "/home/djoroya/Documents/GitHub/YarnBraid/src/dependences/lsprepost4.10_common/lspp410_mesa", 
+ "calculix": "wine /home/djoroya/Documents/GitHub/YarnBraid/src/dependences/calculix/ccx_static.exe"}
