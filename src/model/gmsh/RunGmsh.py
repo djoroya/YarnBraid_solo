@@ -27,7 +27,7 @@ def RunGmsh(params,output_folder):
     gmsh.option.setNumber("General.Terminal", 0)
     gmsh.option.setNumber("Mesh.Algorithm",params["Algorithm"]) 
 
-    fcn = tqdm if params["verbose"] else lambda x: x
+    fcn = tqdm if params["metadata"]["verbose"] else lambda x: x
 
     for j,i in fcn(enumerate(range(1, len(files)+1))):
 

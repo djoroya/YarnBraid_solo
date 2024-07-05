@@ -1,27 +1,27 @@
 
 from model.default          import *
 
-import os
+import shutil,os
 
 from model.lammps.RunLammps         import RunLammps
 from model.lsdyna.RunLSdyna         import RunLSdyna
-from model.gmsh.RunGmsh             import RunGmsh
+from model.Gmsh.RunGmsh             import RunGmsh
 from model.inflation.RunInflation   import RunInflation
 from model.simulation.RunSimulation import RunSimulation
 import colorama
-from tools.step.runstep             import   runstep
+from tools.step.runstep             import   runstep,address
 
 def print_header(header):
     print(colorama.Fore.GREEN + header + colorama.Style.RESET_ALL)
 
-@runstep
+@runstep(address(__file__))
 def RunYB(params,main_path,callback=None):
 
-    out_lammps = [*main_path,"lammps"     ]
-    out_lsdyna = [*main_path,"lsdyna"     ]
-    out_gmsh   = [*main_path,"gmsh"       ]
-    out_inflat = [*main_path,"inflation"  ] 
-    out_simula = [*main_path,"simulation" ]
+    out_lammps = [*main_path,"temp","lammps"     ]
+    out_lsdyna = [*main_path,"temp","lsdyna"     ]
+    out_gmsh   = [*main_path,"temp","gmsh"       ]
+    out_inflat = [*main_path,"temp","inflation"  ] 
+    out_simula = [*main_path,"temp","simulation" ]
 
 
     params_lmp      = params["lammps_sim"]
@@ -76,11 +76,18 @@ def RunYB(params,main_path,callback=None):
     RunSimulation(params_simula,out_simula)
     callback() if callback else None
     # =======================================
+    depen = dict()
+    depen["lmp_path"]     = params_lmp["simulation_path"]
+    depen["lsdyna_path"]  = params_lsdyna["simulation_path"]
+    depen["gmsh_path"]    = params_gmsh["simulation_path"]
+    depen["infl_path"]    = params_infl["simulation_path"]
+    depen["tensile_path"] = params_simula["simulation_path"]
+    params["dependencies"] = depen
 
-    params["lmp_path"]     = params_lmp["simulation_path"]
-    params["lsdyna_path"]  = params_lsdyna["simulation_path"]
-    params["gmsh_path"]    = params_gmsh["simulation_path"]
-    params["infl_path"]    = params_infl["simulation_path"]
-    params["tensile_path"] = params_simula["simulation_path"]
+    # remove card simulations 
+    temp_path = [*main_path,"temp"]
+    temp_path = os.path.join(*temp_path)
+    shutil.rmtree(temp_path)
+
 
     return params

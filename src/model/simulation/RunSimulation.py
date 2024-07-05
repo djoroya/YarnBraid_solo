@@ -1,6 +1,6 @@
 import os
 from tools.basic.loadsavejson     import savejson
-from tools.step.runstep          import runstep
+from tools.step.runstep          import runstep,address
 from model.simulation.build_inp import build_inp
 from tools.calculix.runccx import runccx
 from tools.calculix.read_dat import read_dat
@@ -11,7 +11,7 @@ from model.post.post_processing import post_processing
 
 join = lambda *args: os.path.join(*args)
 
-@runstep
+@runstep(address(__file__))
 def RunSimulation(params,output_folder,callback=None):
 
     callback(nstep=2) if callback else None

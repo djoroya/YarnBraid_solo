@@ -11,6 +11,7 @@ from settings.simulations import simulations
 from tools.basic.path_gen   import path_gen
 from tools.basic.loadsavejson import loadjson
 from settings.main_path import main_path
+from tools.step.common import common
 join = os.path.join
 settings = settings()
 
@@ -27,6 +28,7 @@ def runstep(file="file"):
                 "name":func.__name__,
                 "file":file
             }
+            params["metadata"] = common()
             #output_folder = os.path.abspath(output_folder)
             # assert list
             if not isinstance(output_folder,list):
@@ -60,7 +62,7 @@ def runstep(file="file"):
         
             params["simulation_path_abs"] = simulation_path
             # add settings
-            params["init_time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            params["metadata"]["init_time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             for ikey in settings.keys():
                 params[ikey] = settings[ikey]
             # Execute the function
@@ -95,10 +97,10 @@ def runstep(file="file"):
             for ikey in settings.keys():
                 del params[ikey]
             # Save the params
-            params["error"]     = err
-            params["error_msg"] = error_msg[err]
-            params["elapsed"] = elapsed
-            params["final_time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            params["metadata"]["error"]     = err
+            params["metadata"]["error_msg"] = error_msg[err]
+            params["metadata"]["elapsed"] = elapsed
+            params["metadata"]["final_time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # params["root_folder"] = os.path.abspath(output_folder).replace(output_folder,"")
 
             # pop simulation_path_abs
@@ -114,7 +116,7 @@ def runstep(file="file"):
             params_info = dict()
             params_info["elapsed"] = elapsed
             params_info["error"] = err
-            params_info["final_time"] = params["final_time"] 
+            params_info["final_time"] = params["metadata"]["final_time"] 
             # if key comment exists, add it
             if "comment" in params.keys():
                 params_info["comment"] = params["comment"]
@@ -126,7 +128,12 @@ def runstep(file="file"):
 
 
 def lj(*x):
-    return loadjson(join(simulations(),*x, "params.json"))
+
+    file = join(simulations(),*x, "params.json")
+    if os.path.exists(file):
+        return loadjson(file)
+    else:
+        raise Exception("Simulation not found")
 
 def address(file):
     select = [main_path(),os.sep,".py",".src"]

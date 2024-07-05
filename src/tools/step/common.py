@@ -4,4 +4,6 @@ def common():
     p["error"] = 1
     p["error_msg"] = "No execution"
     p["verbose"] = True
+    p["has_children"] = False
+
     return p

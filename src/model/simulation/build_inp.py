@@ -95,6 +95,8 @@ def build_inp(params):
         # Add step
         # =========================================================================
         nsteps = params["nsteps"]
+        # nsteps = 1 assert "nsteps must be greater than 1"
+        assert nsteps > 1, "nsteps must be greater than 1"
         nruns  = params["nruns"]
         nsets  = params_infl["nsets"]
         
@@ -109,7 +111,7 @@ def build_inp(params):
                 iter = iter + 1
                 di = di_span[iter]
                 # round to 3 decimals
-                di = round(di,3)
+                di = round(di,5)
                 ls = addStep(ls,nsets,params,di)
                 # remove *Contact file output
                 # ls.lines = ls.lines.replace("*Contact file\nCDIS, CSTR, PCON\n",

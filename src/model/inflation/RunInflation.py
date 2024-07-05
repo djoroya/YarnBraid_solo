@@ -7,15 +7,15 @@ from model.inflation.ComputeRadius     import ComputeRadius
 from model.inflation.ComputeDenier     import ComputeDenier
 from model.inflation.CreateDeformedInp import CreateDeformedInp
 import os
-from tools.basic.loadsavejson           import loadjson,savejson
-from tools.step.runstep                 import runstep,lj
+from tools.basic.loadsavejson           import savejson
+from tools.step.runstep                 import runstep,lj,address
 from tools.search_contacts              import search_contacts
 from tools.calculix.inp.addSurfaceGen   import addSurface
 from tools.calculix.runccx              import runccx
 import pandas as pd
 import numpy  as np
 
-@runstep
+@runstep(address(__file__))
 def RunInflation(params,output_folder):
 
     output_folder = params["output_folder"]

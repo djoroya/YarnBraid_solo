@@ -1,12 +1,12 @@
 
-import numpy as np
-import pandas as pd
-from tools.basic.loadsavejson import  savejson
-from tools.basic.path_gen import path_gen
-import os
+import os,shutil
 import time
 from tools.parametrize.html import mostrar_tabla,dataframize,setvalue,init_table
 import traceback
+from tools.step.runstep import runstep,address
+from tools.parametrize.copyrecursive import copyrecursive
+import importlib
+join = os.path.join
 class cont():
     def __init__(self,fcn):
         self.i = 0
@@ -19,9 +19,16 @@ class cont():
         else:    
             self.nsteps = nstep
 
+@runstep(address(__file__))
+def parametrize(main_params,main_path):
 
-def parametrize(main_path,Run,vars,default):
+    module   = main_params["module"]
+    function = main_params["function_module"]
+    Run      = getattr(importlib.import_module(module),function)
+    vars     = main_params["vars"]
+    default  = main_params["default"]
 
+    temp_path = [*main_path,"temp"]
     # main_path is the path where the vars.json will be saved
     # Run is a function that runs the simulation. It must have two arguments:
     # -params: a dictionary with the parameters
@@ -35,10 +42,8 @@ def parametrize(main_path,Run,vars,default):
              "df"   : df   ,
              "paths": []   ,
              "main_path": main_path,
-             "main_path_abs": os.path.abspath(main_path),
+             "main_path_abs": os.path.abspath(join(*main_path)),
              "finished": False  }
-    json_path = os.path.join(main_path,"vars.json")
-    savejson(json, json_path)
 
     procesos = [ "Exp-"+str(i+1) for i in df.index.values]
     procesos = init_table(vars,procesos,df)
@@ -58,11 +63,8 @@ def parametrize(main_path,Run,vars,default):
     nsteps_list = []
     times = [0]
     for i in range(len(df)):
-        params = default()
-        loop_path = os.path.join(main_path,path_gen())
+        params = copyrecursive(default)
 
-        json["paths"].append(loop_path)
-        savejson(json, json_path)
 
         t = time.time()
         c = cont(None)
@@ -75,13 +77,16 @@ def parametrize(main_path,Run,vars,default):
         # 
         current_path = os.getcwd()
         try:
-            params = Run(params,loop_path,callback=callback)
+            Run(params,temp_path,callback=callback)
+            json["paths"].append(params["simulation_path"])
+
         except Exception as e:
             os.chdir(current_path)
             error = True
             print("Error in Run function")
             # save error message in txt file
-            name = os.path.join(loop_path,"error_{:d}.txt".format(i))
+            name = os.path.join(main_params["output_folder"],
+                                "error_{:d}.txt".format(i))
             try:
                 with open(name,"w") as f:
                     f.write(traceback.format_exc())
@@ -102,4 +107,7 @@ def parametrize(main_path,Run,vars,default):
         times.append(t)
 
     json["finished"] = True
-    savejson(json, json_path)
+    main_params["results"] = json
+
+    # remove temp folder
+    shutil.rmtree(join(*temp_path),ignore_errors=True)
