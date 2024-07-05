@@ -8,7 +8,7 @@ from model.inflation.ComputeDenier     import ComputeDenier
 from model.inflation.CreateDeformedInp import CreateDeformedInp
 import os
 from tools.basic.loadsavejson           import loadjson,savejson
-from tools.step.runstep                 import runstep
+from tools.step.runstep                 import runstep,lj
 from tools.search_contacts              import search_contacts
 from tools.calculix.inp.addSurfaceGen   import addSurface
 from tools.calculix.runccx              import runccx
@@ -20,19 +20,9 @@ def RunInflation(params,output_folder):
 
     output_folder = params["output_folder"]
 
-    json_path_file = os.path.join(params["gmsh_path"], "params.json")
-    gmsh_params   = loadjson(json_path_file)
-
-    json_path_file = os.path.join(gmsh_params["root_folder"],
-                                  gmsh_params["lsdyna_path"], 
-                                  "params.json")
-    lsdyna_params = loadjson(json_path_file)
-
-    json_path_file = os.path.join(lsdyna_params["root_folder"],
-                                  lsdyna_params["lmp_path"], 
-                                  "params.json")
-
-    lmp_params     = loadjson(json_path_file)
+    gmsh_params    = lj(params["gmsh_path"])
+    lsdyna_params  = lj(gmsh_params["lsdyna_path"])
+    lmp_params     = lj(lsdyna_params["lmp_path"])
 
     nhilos = lmp_params["nhilos"]
     params["theta"] = lmp_params["theta"]

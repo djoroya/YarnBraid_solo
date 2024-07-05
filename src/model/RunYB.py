@@ -9,21 +9,23 @@ from model.gmsh.RunGmsh             import RunGmsh
 from model.inflation.RunInflation   import RunInflation
 from model.simulation.RunSimulation import RunSimulation
 import colorama
+from tools.step.runstep             import   runstep
 
 def print_header(header):
     print(colorama.Fore.GREEN + header + colorama.Style.RESET_ALL)
 
+@runstep
 def RunYB(params,main_path,callback=None):
 
-    out_lammps = os.path.join(main_path,"lammps")
-    out_lsdyna = os.path.join(main_path,"lsdyna")
-    out_gmsh   = os.path.join(main_path,"gmsh")
-    out_inflat = os.path.join(main_path,"inflation")
-    out_simula = os.path.join(main_path,"simulation")
+    out_lammps = [*main_path,"lammps"     ]
+    out_lsdyna = [*main_path,"lsdyna"     ]
+    out_gmsh   = [*main_path,"gmsh"       ]
+    out_inflat = [*main_path,"inflation"  ] 
+    out_simula = [*main_path,"simulation" ]
 
 
-    params_lmp      = params["lammps"]
-    params_lsdyna   = params["lsdyna"]
+    params_lmp      = params["lammps_sim"]
+    params_lsdyna   = params["lsdyna_sim"]
     params_gmsh     = params["gmsh"]
     params_infl     = params["inflation"]
     params_simula   = params["simulation"]
@@ -42,7 +44,7 @@ def RunYB(params,main_path,callback=None):
     print_header("Running lsdyna")
     print_header("====================================")
 
-    params_lsdyna['lmp_path']  = params_lmp["output_folder"]
+    params_lsdyna['lmp_path']  = params_lmp["simulation_path"]
     RunLSdyna(params_lsdyna,out_lsdyna)
     callback() if callback else None
     # =======================================
@@ -52,7 +54,7 @@ def RunYB(params,main_path,callback=None):
     print_header("Running gmsh")
     print_header("====================================")
 
-    params_gmsh["lsdyna_path"] = params_lsdyna["output_folder"]
+    params_gmsh["lsdyna_path"] = params_lsdyna["simulation_path"]
     RunGmsh(params_gmsh,out_gmsh)
     callback() if callback else None
     # =======================================
@@ -61,7 +63,7 @@ def RunYB(params,main_path,callback=None):
     print_header("Running inflation")
     print_header("====================================")
 
-    params_infl["gmsh_path"]  =  params_gmsh["output_folder"] 
+    params_infl["gmsh_path"]  =  params_gmsh["simulation_path"] 
     RunInflation(params_infl,out_inflat)
     callback() if callback else None
     # =======================================
@@ -70,9 +72,15 @@ def RunYB(params,main_path,callback=None):
     print_header("Running simulation")
     print_header("====================================")
 
-    params_simula["inflation_path"] = params_infl["output_folder"]
+    params_simula["inflation_path"] = params_infl["simulation_path"]
     RunSimulation(params_simula,out_simula)
     callback() if callback else None
     # =======================================
+
+    params["lmp_path"]     = params_lmp["simulation_path"]
+    params["lsdyna_path"]  = params_lsdyna["simulation_path"]
+    params["gmsh_path"]    = params_gmsh["simulation_path"]
+    params["infl_path"]    = params_infl["simulation_path"]
+    params["tensile_path"] = params_simula["simulation_path"]
 
     return params

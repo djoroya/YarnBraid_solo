@@ -5,7 +5,7 @@ from tools.basic.loadsavejson     import loadjson
 import numpy as np
 from tools.calculix.read_dat import read_dat
 from model.simulation.addStep import addStep
-
+from settings.simulations import simulations
 class lines_obj():
     def __init__(self):
         self.lines = ""
@@ -17,6 +17,7 @@ join = lambda *args: os.path.join(*args)
 def build_inp(params):
 
         inflation_folder = params["inflation_path"]
+        inflation_folder = join(simulations(),inflation_folder)
         output_folder    = params["output_folder"]
         # Load de inp of inflation
         # ==============================================================================

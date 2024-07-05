@@ -2,7 +2,7 @@ import os
 from tools.calculix.inp.inp         import inp
 import numpy as np
 from tools.basic.loadsavejson    import loadjson
-
+from settings.simulations         import simulations
 def have_first_point(isurf,inp_f,df):
     # dado una superficie isurf, un inp inp_f y un df
 
@@ -33,9 +33,7 @@ def LoadInp(gmsh_params,df,nhilos):
     # =============================================================================
     # Cargamos los paths de los  inp
     # =============================================================================
-    folder      = gmsh_params["output_folder"] 
-    root_folder = gmsh_params["root_folder"]
-    folder      = os.path.join(root_folder,folder)
+    folder      = os.path.join(simulations(),gmsh_params["simulation_path"])
     # =============================================================================
     #find step files
     files = os.listdir(folder)

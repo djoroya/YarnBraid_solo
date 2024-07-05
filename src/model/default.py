@@ -1,66 +1,5 @@
 
 from tools.step.common import common
-import numpy as np
-
-
-
-def gmsh_default_table():
-    p = common()
-    p["factor_radius"] = 0.8
-    p["factor_mesh_min"] = 2.3
-    p["factor_mesh_max"] = 2.8
-    p["debug"] = False
-    p["refine"] = False
-
-    return p
-
-def lmp_default():
-    p = common()
-    p["Npoints"]       = 150
-    p["hilo_central"]  = 0
-    p["theta"] = np.deg2rad(51)
-    p["factor"]        = 4
-    p["Remesh"]        = False
-    p["RUN_STEPS_EQ"]     = 1
-    p["RUN_STEPS_DEFORM"]   = 10000
-    p["errate"]  = 0
-    p["nhilos"]  = 4
-    p["dist_factor"] = 1.2
-    p["r0_factor"] = 0.25
-    p["V0_bond"] = 300
-    p["r_hebra"] = 0.2
-    p["external_hilos"] = False
-    p["recompute_dist"] = False
-    p["recompute_factor"] = 1
-    p["Npoints_density"] = None # 
-
-    # ======================================================
-    p["yukawa"] = dict()
-    p["yukawa"]["A"] =  500.0
-    p["yukawa"]["kappa"] = 1.0
-    p["yukawa"]["cutoff"] = None
-    #
-    p["OMP_NUM_THREADS"] = 1
-    p["mpi"] = False
-    p["mpi_np"] = 4
-
-    return p
-
-def lsdyna_default():
-    p = common()
-    p["radius"]        = None
-    p["factor_npoints"] = 1/8
-    p["align"]         = False
-    p["factor"]        = 0.9
-    p["hmax"]          = None
-    return p
-
-def gmsh_default():
-    p = common()
-    p["size_element"]  = None # If is None, size ele,ent take radius of yarn 1.2
-    p["Algorithm"]     = 1
-    p["factor"]        = None # If is None, size ele,ent take radius of yarn 1.2
-    return p
 
 def inflation_default():
     p = common()
@@ -106,8 +45,8 @@ def simulation_default():
 
 def default():
     p = dict()
-    p["lammps"]      = lmp_default()
-    p["lsdyna"]      = lsdyna_default()
+    p["lammps_sim"]      = lmp_default()
+    p["lsdyna_sim"]      = lsdyna_default()
     p["gmsh"]        = gmsh_default()
     p["inflation"]   = inflation_default()
     p["simulation"]  = simulation_default()

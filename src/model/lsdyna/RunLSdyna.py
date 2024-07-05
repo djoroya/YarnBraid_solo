@@ -4,19 +4,17 @@ import os
 from model.lsdyna.lsdyna          import build_geo
 from model.lsdyna.StartSamePlane  import StartSamePlane
 
-from tools.basic.loadsavejson     import loadjson,savejson
-from tools.step.runstep          import runstep
-from tqdm.auto                   import tqdm
+from tools.basic.loadsavejson     import savejson
+from tools.step.runstep          import runstep,lj,address
+from tqdm                   import tqdm
 import shutil
-import subprocess
-import numpy as np
-@runstep
+
+@runstep(address(__file__))
 def RunLSdyna(params,output_folder):
 
     out_folder = params["output_folder"]
     out_folder_abs = os.path.abspath(out_folder)
-    params_lmp = loadjson(os.path.join(params['lmp_path'],"params.json"))
-
+    params_lmp = lj(params["lmp_path"])
     params["npoints"] = int(params["factor_npoints"]*params_lmp["Npoints"])
 
     if params["hmax"] is not None:
@@ -79,7 +77,7 @@ def RunLSdyna(params,output_folder):
     # Guardar el archivo params.json
     # Antes de iniciar la simulacion
     # por si ocurre un error
-    json_file = os.path.join(output_folder,"params.json")
+    json_file = os.path.join(out_folder,"params.json")
     savejson(params,json_file)
 
     fcn = tqdm if params["verbose"] else lambda x: x

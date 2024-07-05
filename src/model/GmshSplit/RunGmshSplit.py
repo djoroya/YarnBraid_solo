@@ -1,18 +1,17 @@
 import os
-from tools.step.runstep import runstep
-from tools.basic.loadsavejson import loadjson
+from tools.step.runstep import runstep,lj,address
 import numpy as np
-from model.gmsh.genesq import genesq
-from model.gmsh.gmsh import gmsh_mesh
+from model.GmshSplit.functions.genesq import genesq
+from model.GmshSplit.functions.gmsh import gmsh_mesh
 join = os.path.join
-lj   = lambda *x: loadjson(join(*x))
 
-@runstep
-def RunGmshTable(params,output_folder):
+
+@runstep(address(__file__))
+def RunGmshSplit(params,output_folder):
 
     lammps_path = params["lammps_path"]
 
-    params_lmp = lj(lammps_path,"params.json")
+    params_lmp = lj(lammps_path)
     params_lmp["r0"] = params_lmp["r_hebra"]
     r0 = params_lmp["r0"]*params["factor_radius"]
 
@@ -33,9 +32,7 @@ def RunGmshTable(params,output_folder):
         print("Trajectory ",iterations)
         iterations += 1
         
-        args = (itraj,r0,output_folder,params)
-
-        inp_obj_loop = gmsh_mesh(*args)
+        inp_obj_loop = gmsh_mesh(itraj,r0,params)
 
         inp_obj.append(inp_obj_loop)
 
@@ -48,9 +45,10 @@ def RunGmshTable(params,output_folder):
     N = len(inp_obj)
 
     for i in range(N):
-        inp_obj[i].print(output_folder + "/mesh" + str(i) + ".inp")
-
+        inp_obj[i].print(join(params["output_folder"],
+                              "mesh" + str(i) + ".inp"))
     for i in range(1,N):
         inp_obj[0].merge(inp_obj[i], prefix="P"+str(i+1)+"_")
 
-    inp_obj[0].print(output_folder + "/init.inp")
+
+    inp_obj[0].print(join(params["output_folder"],"init.inp"))

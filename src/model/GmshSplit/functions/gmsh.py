@@ -13,8 +13,9 @@ join = os.path.join
 
 # ===============================================================
 
-def gmsh_mesh(trajs_gmsh,r0,outfolder,params):
+def gmsh_mesh(trajs_gmsh,r0,params):
 
+    outfolder = params["output_folder"]
     
     dtraj = trajs_gmsh[1:] - trajs_gmsh[:-1]
 

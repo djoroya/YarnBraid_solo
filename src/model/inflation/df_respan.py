@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
 import os 
-
+from settings.simulations import simulations
 join = lambda *args: os.path.join(*args)
 def df_respan(lsdyna_params,nhilos):
     
     npoints = lsdyna_params["npoints"]
 
-    df = pd.read_csv(join(lsdyna_params["root_folder"],
+    df = pd.read_csv(join(simulations(),
                           lsdyna_params["lmp_path"],
                           "data.csv"))
 

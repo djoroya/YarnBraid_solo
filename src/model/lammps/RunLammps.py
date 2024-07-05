@@ -3,7 +3,7 @@ from model.lammps.WriteDataLmp import WriteDataLmp
 from model.lammps.WriteRunLmp  import WriteRunLmp
 from model.lammps.ParseLmp     import ParseLmp
 import os
-from tools.step.runstep import   runstep
+from tools.step.runstep import runstep,address
 import numpy as np
 from tools.lammps.run_lmp import run_lmp
 from model.lammps.conse_dist import conse_dist
@@ -15,13 +15,13 @@ def print_header(header):
     print(colorama.Fore.GREEN + header + colorama.Style.RESET_ALL)
 
 
-@runstep
+@runstep(address(__file__))
 def RunLammps(params,output_folder,callback=None):
 
     callback(nstep=2) if callback else None
 
     #
-
+    simulation_path = params["output_folder"]
 
     N     = params["nhilos"]
     rho   = params["r_hebra"]
@@ -42,11 +42,11 @@ def RunLammps(params,output_folder,callback=None):
         print_header("====================================")
     # =======================================================
     # Write the data file
-    file   = os.path.join(output_folder,"data.lammps")
+    file   = os.path.join(simulation_path,"data.lammps")
     params = WriteDataLmp(params,file)
     # =======================================================
     # Write the run file
-    file   = os.path.join(output_folder,"in.lammps")
+    file   = os.path.join(simulation_path,"in.lammps")
     params = WriteRunLmp(params,file)
     # =======================================================
     # Execute the run file (name in.lammps and output out.lammps)
@@ -62,16 +62,16 @@ def RunLammps(params,output_folder,callback=None):
              "mpi_np":params["mpi_np"]}
     
     if not params["recompute_dist"]:
-        error,cmd =run_lmp(output_folder,**p_cpu)
+        error,cmd =run_lmp(simulation_path,**p_cpu)
         params = ParseLmp(params,file="data.csv")
 
     else:
         maxiter = 10
         for i in range(maxiter):
-            error,cmd =run_lmp(output_folder,**p_cpu)
+            error,cmd =run_lmp(simulation_path,**p_cpu)
             params = ParseLmp(params,file="data.csv")
 
-            r = conse_dist(output_folder,params["nhilos"])
+            r = conse_dist(simulation_path,params["nhilos"])
             params["percent_dist"] = r["percent"]
             if r["percent"] < 20:
                 break
@@ -88,6 +88,6 @@ def RunLammps(params,output_folder,callback=None):
     params["cmd"] = cmd
     # save params as json
     # =======================================================
-    params["dump_last"] = os.path.join(output_folder,"data_last.lammps")
+    params["dump_last"] = os.path.join(simulation_path,"data_last.lammps")
     # =======================================================
     return params

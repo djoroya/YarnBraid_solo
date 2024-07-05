@@ -1,19 +1,18 @@
 from tools.basic.loadsavejson     import loadjson
 import os,gmsh
-from tools.step.runstep          import runstep
+from tools.step.runstep          import runstep,lj,address
 from tqdm                   import tqdm
-@runstep
+from settings.simulations import simulations
+
+@runstep(address(__file__))
 def RunGmsh(params,output_folder):
     
     # full path
     output_folder = params["output_folder"]
     
-    lsdyna_path = os.path.join(params["lsdyna_path"],"params.json")
-    lsdyna_params = loadjson(lsdyna_path)
+    lsdyna_params = lj(params["lsdyna_path"])
 
-    folder = lsdyna_params["output_folder"]
-    root   = lsdyna_params["root_folder"]
-    folder = os.path.join(root,folder)
+    folder = os.path.join(simulations(),lsdyna_params["simulation_path"])
     #find step files
     files = os.listdir(folder)
     files = [f for f in files if f.endswith('.step')]

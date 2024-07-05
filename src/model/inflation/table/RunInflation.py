@@ -9,17 +9,17 @@ from model.inflation.table.addStep          import addStep
 import numpy as np
 from tools.calculix.runccx import runccx
 from tools.search_contacts              import search_contacts
+from settings.simulations import simulations
+join = os.path.join
+lj   = lambda *x: loadjson(join(simulations(),*x, "params.json"))
 
-@runstep
+@runstep("RunInflation")
 def RunInflation(params,out_folder):
 
-    json_path_file = os.path.join(params["gmsh_path"],"params.json")
-    gmsh_params    = loadjson(json_path_file)
-
-
-    lammps_params  = loadjson(os.path.join(gmsh_params["root_folder"],
-                                           gmsh_params["lammps_path"],
-                                           "params.json"))
+    gmsh_params    = lj(params["gmsh_path"])
+    lammps_params  = lj(gmsh_params["lammps_path"])
+    out_folder     = params["output_folder"]
+    
     params["lammps_params"] = lammps_params
     params["gmsh_params"]   = gmsh_params
     #
@@ -45,13 +45,6 @@ def RunInflation(params,out_folder):
     file = os.path.join(out_folder,"init.inp")
 
     inp_file.print(file)
-
-    # contacts = np.array([[1,2],
-    #                      [1,3],
-    #                      [2,4]])
-    # # self contact
-    # for i in range(1,5):
-    #     contacts = np.append(contacts,[[i,i]],axis=0)
 
     radius = lammps_params["r_hebra"]
     contacts = search_contacts(df,th = 6*radius)
