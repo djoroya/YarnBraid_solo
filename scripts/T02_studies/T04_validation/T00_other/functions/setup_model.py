@@ -5,7 +5,7 @@ import os
 
 from model.lammps.RunLammps         import RunLammps
 from model.lsdyna.RunLSdyna         import RunLSdyna
-from model.gmsh.RunGmsh             import RunGmsh
+from model.Gmsh.RunGmsh             import RunGmsh
 from model.inflation.RunInflation   import RunInflation
 import colorama
 
@@ -14,14 +14,14 @@ def print_header(header):
 
 def setup_model(params,main_path,callback=None):
 
-    out_lammps = os.path.join(main_path,"lammps")
-    out_lsdyna = os.path.join(main_path,"lsdyna")
-    out_gmsh   = os.path.join(main_path,"gmsh")
-    out_inflat = os.path.join(main_path,"inflation")
+    out_lammps = [*main_path,"lammps"]
+    out_lsdyna = [*main_path,"lsdyna"]
+    out_gmsh   = [*main_path,"gmsh"]
+    out_inflat = [*main_path,"inflation"]
 
 
-    params_lmp      = params["lammps"]
-    params_lsdyna   = params["lsdyna"]
+    params_lmp      = params["lammps_sim"]
+    params_lsdyna   = params["lsdyna_sim"]
     params_gmsh     = params["gmsh"]
     params_infl     = params["inflation"]
 
@@ -31,6 +31,8 @@ def setup_model(params,main_path,callback=None):
     # STEP 1: Run lammps
     print_header("Running lammps")
     print_header("====================================")
+    params_lmp["settings_step"]["has_parent"] = True
+
     RunLammps(params_lmp,out_lammps)
     callback() if callback else None
     if params["only_lammps"]:
@@ -41,7 +43,9 @@ def setup_model(params,main_path,callback=None):
     print_header("Running lsdyna")
     print_header("====================================")
 
-    params_lsdyna['lmp_path']  = params_lmp["output_folder"]
+    params_lsdyna['lmp_path']  = params_lmp["simulation_path"]
+    params_lsdyna["settings_step"]["has_parent"] = True
+
     RunLSdyna(params_lsdyna,out_lsdyna)
     callback() if callback else None
     # =======================================
@@ -51,7 +55,9 @@ def setup_model(params,main_path,callback=None):
     print_header("Running gmsh")
     print_header("====================================")
 
-    params_gmsh["lsdyna_path"] = params_lsdyna["output_folder"]
+    params_gmsh["lsdyna_path"] = params_lsdyna["simulation_path"]
+    params_gmsh["settings_step"]["has_parent"] = True
+
     RunGmsh(params_gmsh,out_gmsh)
     callback() if callback else None
     # =======================================
@@ -60,11 +66,11 @@ def setup_model(params,main_path,callback=None):
     print_header("Running inflation")
     print_header("====================================")
 
-    params_infl["gmsh_path"]  =  params_gmsh["output_folder"] 
+    params_infl["gmsh_path"]  =  params_gmsh["simulation_path"] 
+    params_infl["settings_step"]["has_parent"] = True
+
     RunInflation(params_infl,out_inflat)
     callback() if callback else None
     # =======================================
-
-
 
     return params

@@ -27,6 +27,7 @@ def parametrize(main_params,main_path):
     Run      = getattr(importlib.import_module(module),function)
     vars     = main_params["vars"]
     default  = main_params["default"]
+    main_params["settings_step"]["has_children"] = True
 
     temp_path = [*main_path,"temp"]
     # main_path is the path where the vars.json will be saved
@@ -41,8 +42,6 @@ def parametrize(main_params,main_path):
     json = { "vars" : vars,
              "df"   : df   ,
              "paths": []   ,
-             "main_path": main_path,
-             "main_path_abs": os.path.abspath(join(*main_path)),
              "finished": False  }
 
     procesos = [ "Exp-"+str(i+1) for i in df.index.values]
@@ -77,6 +76,7 @@ def parametrize(main_params,main_path):
         # 
         current_path = os.getcwd()
         try:
+            params["settings_step"]["has_parent"] = True
             Run(params,temp_path,callback=callback)
             json["paths"].append(params["simulation_path"])
 

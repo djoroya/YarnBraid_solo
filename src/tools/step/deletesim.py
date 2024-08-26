@@ -21,8 +21,16 @@ def delete_sim_key(simulation_path):
         sim_params   = loadjson(sim_params_path)
 
     if os.path.exists(sim_path_abs):
+        print("Sim_params: ",sim_params)
+        
+        if "settings_step" not in sim_params:
+            sim_params["settings_step"] = dict()
+            sim_params["settings_step"]["has_children"] = False
+            sim_params["settings_step"]["has_parent"] = False
+            sim_params["settings_step"]["verbose"] = False
+        
 
-        if sim_params["has_children"]:
+        if sim_params["settings_step"]["has_children"]:
             print("==============================")
             print("Simulation {} has children".format(simulation_path))
             # load params 

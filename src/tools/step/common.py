@@ -3,7 +3,14 @@ def common():
     p["elapsed"] = 0
     p["error"] = 1
     p["error_msg"] = "No execution"
-    p["verbose"] = True
-    p["has_children"] = False
+
 
     return p
+
+def stepsettings():
+    p = dict()
+    p["has_children"] = False
+    p["has_parent"]   = False
+    p["verbose"]      = True
+
+    return {"settings_step": p}

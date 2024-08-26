@@ -1,6 +1,18 @@
 import json
 import numpy as np
 import pandas as pd
+
+
+def convert_types(obj):
+    if isinstance(obj, np.int64):
+        return int(obj)
+    elif isinstance(obj, dict):
+        return {k: convert_types(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_types(i) for i in obj]
+    else:
+        return obj
+
 def savejson(diccionario, ruta_archivo):
     diccionario = diccionario.copy()
     # 
@@ -20,6 +32,7 @@ def savejson(diccionario, ruta_archivo):
         if type(valor) == np.int64:
             diccionario[clave] = int(valor)
 
+    diccionario = convert_types(diccionario)
 
     # Guardar el diccionario en un archivo JSON
     with open(ruta_archivo, 'w') as archivo:

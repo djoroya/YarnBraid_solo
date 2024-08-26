@@ -1,7 +1,7 @@
-from tools.step.common import common    
+from tools.step.common import stepsettings    
 
 def default():
-    p = common()
+    p = stepsettings()
     p["tensile_path"]        = ""
     p["max_mono"] = None
 

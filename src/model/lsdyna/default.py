@@ -1,7 +1,7 @@
-from tools.step.common import common    
+from tools.step.common import stepsettings    
 
 def default():
-    p = common()
+    p = stepsettings()
     p["radius"]        = None
     p["factor_npoints"] = 1/8
     p["align"]         = False

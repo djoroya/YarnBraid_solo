@@ -1,7 +1,7 @@
-from tools.step.common import common
+from tools.step.common import stepsettings
 
 def default():
-    p = common()
+    p = stepsettings()
     p["factor_radius"] = 0.8
     p["factor_mesh_min"] = 2.3
     p["factor_mesh_max"] = 2.8

@@ -1,8 +1,8 @@
 
-from tools.step.common import common
+from tools.step.common import stepsettings
 
 def default():
-    p = common()
+    p = stepsettings()
     p["pressure"]  = 300 # Pa
     p["OMP_NUM_THREADS"]     = 16
     p["attemps"] = 4 # number of attemps

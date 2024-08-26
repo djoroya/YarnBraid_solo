@@ -1,10 +1,10 @@
 
-from tools.step.common import common
+from tools.step.common import stepsettings
 
 
 
 def default():
-    p = common()
+    p = stepsettings()
     p["young"]   = 2960 # MPa
     p["poisson"] = 0.37 # 
     p["epsilon"] = 0.1 # [-] strain

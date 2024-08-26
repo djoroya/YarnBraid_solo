@@ -80,7 +80,7 @@ def RunLSdyna(params,output_folder):
     json_file = os.path.join(out_folder,"params.json")
     savejson(params,json_file)
 
-    fcn = tqdm if params["metadata"]["verbose"] else lambda x: x
+    fcn = tqdm if params["settings_step"]["verbose"] else lambda x: x
     
     hilo_central = params_lmp["hilo_central"]
     # remove last yarn 

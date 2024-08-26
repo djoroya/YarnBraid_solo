@@ -1,7 +1,7 @@
-from tools.step.common import common
+from tools.step.common import stepsettings
 
 def default():
-    p = common()
+    p = stepsettings()
     p["size_element"]  = None # If is None, size ele,ent take radius of yarn 1.2
     p["Algorithm"]     = 1
     p["factor"]        = None # If is None, size ele,ent take radius of yarn 1.2

@@ -12,7 +12,7 @@ join = os.path.join
 def RunPost(params,outfolder):
 
     sim_path        = params["tensile_path"]
-    verbose         = params["metadata"]["verbose"]
+    verbose         = params["settings_step"]["verbose"]
     max_mono        = params["max_mono"]
 
     def printv(*args,**kwargs):

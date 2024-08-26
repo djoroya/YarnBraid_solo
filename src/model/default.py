@@ -1,19 +1,21 @@
 
-from tools.step.common import common
+from tools.step.common import common,stepsettings
 from model.lammps.default import default as lmp_default
 from model.lsdyna.default import default as lsdyna_default
 from model.Gmsh.default import default as gmsh_default
 from model.inflation.default import default as inflation_default
 from model.simulation.default import default as simulation_default
+from model.post.default import default as post_default
 
 def default():
-    p = dict()
+    p = stepsettings()
     p["has_children"] = True
     p["lammps_sim"]  = lmp_default()
     p["lsdyna_sim"]  = lsdyna_default()
     p["gmsh"]        = gmsh_default()
     p["inflation"]   = inflation_default()
     p["simulation"]  = simulation_default()
+    p["post"]        = post_default()
     p["only_lammps"] = False
     return p
 

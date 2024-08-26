@@ -31,3 +31,6 @@ nbformat
 numpy-stl
 meshio
 requests
+jinja2
+flask
+flask_cors
