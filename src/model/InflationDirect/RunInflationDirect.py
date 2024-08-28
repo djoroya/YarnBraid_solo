@@ -17,6 +17,11 @@ def RunInflationDirect(params,out_folder):
     lammps_params  = lj(gmsh_params["lammps_path"])
     out_folder     = params["output_folder"]
     
+    young    = 2960 # Este es el modulo de young del material que se usa en la inflacion
+    lamb     = gmsh_params["factor_radius"]
+    if params["auto_pressure"]:
+        params["pressure"] = young * (1-lamb)/lamb
+
     params["lammps_params"] = lammps_params
     params["gmsh_params"]   = gmsh_params
     #
@@ -25,12 +30,16 @@ def RunInflationDirect(params,out_folder):
 
     params["pressure"] = young * (1-lamb)/lamb
 
-    df = lammps_params["old_df"]
+    df = gmsh_params["trajs"]
     # change xu yu zu -> x,y,z columns names
     df.columns = ["type","x","y","z"]
 
     
     df = [ df[df["type"]==i] for i in np.unique(df["type"]) ]
+    df = [ df[i] for i in range(64)]
+
+    # factor length gmsh_params["factor_length"]
+
     # Necesitamos agregar muchos puntos para que al buscar
     
     # puntos cercanos a las curvas no se pierdan puntos
@@ -49,6 +58,13 @@ def RunInflationDirect(params,out_folder):
     params["contacts"] = contacts
 
     addStep(inp_file,contacts,file,params)
+
+    name_nsets = [ inset.name     for inset in inp_file.nsets]
+    data_nsets = [ inset.id_nodes for inset in inp_file.nsets]
+
+    nset_dict = dict(zip(name_nsets,data_nsets))
+
+    params["nsets"] = nset_dict
 
     runccx(out_folder, "init",mpi=params["mpi"],
            mpi_np=params["mpi_np"],

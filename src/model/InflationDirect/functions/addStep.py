@@ -117,8 +117,8 @@ U
     step_lines = ""    
     nsteps = params["nsteps"]
     p_space = np.linspace(0,pressure,nsteps+1)
-    p_space = p_space[1:]
-    for i in range(nsteps):
+    p_space[0] = 0.25*p_space[1]
+    for i in range(nsteps+1):
         step_lines = step_lines + gen_step(p_space[i])
     lines = lines + step_lines
 

@@ -3,9 +3,7 @@ import numpy as np
 def WriteRunLmp(params,file):
 
     trajs = params["trajs"]
-    rs    = params["r_hilo"]
-    h     = params["h"]
-    nhilos = params["nhilos"]
+
     params["WriteRunLmp"] = file
 
     lens = [ len(trajs[i]) for i in range(len(trajs))]
@@ -43,11 +41,19 @@ read_data	data.lammps extra/bond/per/atom 1
 #                   kappa  cutoff
 pair_style yukawa   yukawa_kappa yukawa_cutoff
 pair_coeff * * yukawa_energy
+"""
 
+    for i in range(len(trajs)):
+        for j in range(i,len(trajs)):
+            if i == j:
+                lines += "pair_coeff {} {} 0\n".format(i+1,j+1)
+            else:
+                lines += "pair_coeff {} {} yukawa_energy\n".format(i+1,j+1)
+
+    lines = lines + """
 # Bonds 
 bond_style harmonic
 bond_coeff 1 V0_bond  r0_bond
-bond_coeff 2 100000  2_r0_bond_2
 
 # angles zero
 angle_style harmonic
@@ -62,10 +68,6 @@ angle_coeff 2 1500 90.0
     lines = lines.replace("yukawa_energy",str(yukawa_energy))
     lines = lines.replace("yukawa_kappa",str(yukawa_kappa))
 
-
-    nn = h/(8)
-    theta = np.arctan(h/(2*params["r_mean"]))
-    L = nn*np.sin(theta)
     dist_hilos = 2*params["r_hebra"]
 
     if yukawa_cutoff is None:
@@ -76,10 +78,7 @@ angle_coeff 2 1500 90.0
 
     if dist_hilos < params["r_hebra"]:
         raise Exception("dist_hilos < r_hebra")
-    if not params["recompute_dist"]:
-        lines = lines.replace("2_r0_bond_2",str(dist_hilos))
-    else:
-        lines = lines.replace("2_r0_bond_2",str(params["recompute_factor"]*dist_hilos))
+
 
     r0_factor = params["r0_factor"]
     lines = lines.replace("r0_bond",str( r0_factor*dist))
@@ -132,7 +131,7 @@ fix 2 all deform 1 z erate VAR_ERRATE_Z
 fix 3 fixed setforce 0.0 0.0 0.0
 dump		1 all custom 1000 dump.xyz id type xu yu zu mol
 
-timestep  0.03
+timestep  0.05
 
 run RUN_STEPS_DEFORM
 unfix 1

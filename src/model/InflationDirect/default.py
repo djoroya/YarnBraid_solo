@@ -19,4 +19,5 @@ def default():
     p["nsteps"] = 1 # number of steps
     p["nlgeom"] = True # nonlinear simulation
     p["gmsh_path"] = ""
+    p["auto_pressure"] = False
     return p

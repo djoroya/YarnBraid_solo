@@ -19,7 +19,7 @@ def default():
     p["recompute_dist"] = False
     p["recompute_factor"] = 1
     p["Npoints_density"] = None # 
-
+    p["remove_final"] = False
     # ======================================================
     p["yukawa"] = dict()
     p["yukawa"]["A"] =  500.0

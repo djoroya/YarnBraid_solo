@@ -29,7 +29,13 @@ def genesq(inp_files,df,radius=0.2):
         #
         id_nodes = np.unique(id_nodes)
 
+        nodes_selected = nodes.loc[id_nodes]
+        # 
+        #sort by z
+        index_sort = np.argsort(nodes_selected["z"])
+        id_nodes = nodes_selected.index[index_sort]
         # remove id_nodes that are in bot and top
+        nodes_selected = nodes_selected.loc[id_nodes]
         id_nodes = id_nodes[1:-1]
 
         inp_files[j].FromId2Nset(id_nodes,"esqueleto_"+str(j+1))

@@ -1,10 +1,7 @@
-from tools.basic.loadsavejson import loadjson
-from matplotlib import pyplot as plt
+
 import numpy as np
 import sys
 import gmsh
-import math
-from matplotlib import pyplot as plt
 from tools.calculix.inp.inp import inp
 import pandas as pd
 import os
@@ -24,6 +21,8 @@ def gmsh_mesh(trajs_gmsh,r0,params):
     long = np.cumsum(long)
 
     gmsh.initialize(sys.argv)
+    # algoriathm
+    gmsh.option.setNumber("Mesh.Algorithm", 2)
 
     rd = r0
 
@@ -210,30 +209,6 @@ def gmsh_mesh(trajs_gmsh,r0,params):
     gmsh.option.setNumber("Mesh.Optimize", 1)  # Optimizar la malla
     gmsh.option.setNumber("Mesh.OptimizeNetgen", 1)  # Utilizar Netgen para optimización
 
-
-    # gmsh.model.mesh.field.add("Distance", 1)
-    # gmsh.model.mesh.field.setNumbers(1, "NodesList", nodes)
-    # # gmsh.model.mesh.field.setNumbers(1, "PointsList",nodes)
-
-    # gmsh.model.mesh.field.add("Threshold",2)
-    # gmsh.model.mesh.field.setNumber(2, "InField", 1)
-    # gmsh.model.mesh.field.setNumber(2, "SizeMin", 0.25*params["MeshSizeMin"])
-    # gmsh.model.mesh.field.setNumber(2, "SizeMax", params["MeshSizeMax"])
-    # gmsh.model.mesh.field.setNumber(2, "LcMin", 0.25*params["MeshSizeMin"])
-    # gmsh.model.mesh.field.setNumber(2, "LcMax", params["MeshSizeMax"])
-    # gmsh.model.mesh.field.setNumber(2, "DistMin", 1)
-    # gmsh.model.mesh.field.setNumber(2, "DistMax", 5)
-
-    # gmsh.model.mesh.field.add("Constant", 3)
-    # gmsh.model.mesh.field.setNumber(3, "VIn", params["MeshSizeMax"])
-
-    # # Combinar los campos de malla
-    # gmsh.model.mesh.field.add("Min", 4)
-    # gmsh.model.mesh.field.setNumbers(4, "FieldsList", [2, 3])
-    # gmsh.model.mesh.field.setAsBackgroundMesh(4)
-    # gmsh.model.geo.synchronize()
-
-
     #open gmsh GUI
     try:
         gmsh.model.mesh.generate(3)
@@ -243,7 +218,6 @@ def gmsh_mesh(trajs_gmsh,r0,params):
             gmsh.fltk.run()
         gmsh.finalize()
         raise ValueError("Error in mesh generation")
-    # gmsh.model.mesh.optimize("Netgen")
 
     gmsh.model.mesh.setOrder(2)
 

@@ -24,6 +24,11 @@ def RunInflation(params,output_folder):
     lsdyna_params  = lj(gmsh_params["lsdyna_path"])
     lmp_params     = lj(lsdyna_params["lmp_path"])
 
+    young    = 2960 # Este es el modulo de young del material que se usa en la inflacion
+    lamb     = lsdyna_params["factor"]
+    if params["auto_pressure"]:
+        params["pressure"] = young * (1-lamb)/lamb
+
     nhilos = lmp_params["nhilos"]
     params["theta"] = lmp_params["theta"]
     

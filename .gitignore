@@ -36,3 +36,4 @@ build/NetKnot/frontend/src/data/input.out.json
 build/NetKnot/to_share
 build/NetKnot/deploys/temp
 simulations
+*.pkl

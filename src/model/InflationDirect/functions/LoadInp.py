@@ -3,6 +3,7 @@ from tools.calculix.inp.inp         import inp
 import numpy as np
 from model.InflationDirect.functions.addSurface import addSurface
 from settings.simulations import simulations
+from tools.basic.loadsavejson import savejson
 
 
 def have_first_point(isurf,inp_f,df):
@@ -113,8 +114,13 @@ def LoadInp(gmsh_params,df,params):
             inp_file.FromId2Nset(id_circ,"CIRC_"+ilabel+"_"+str(id_traj+1))
 
             # add nset center of the circle
-            id_nearst = np.argmin(dist)
-            id_center = id_bot[id_nearst]
+            try:
+                id_nearst = np.argmin(dist)
+                id_center = id_bot[id_nearst]
+            except:
+                savejson({"data":nodes_rot},"params.json")
+                print("Error in LoadInp")
+                print("id_traj",id_traj)
             #from nodes 
 
             inp_file.FromId2Nset([id_center],
@@ -171,54 +177,6 @@ def LoadInp(gmsh_params,df,params):
     addSurface(inp_file,"SURFACE",surf_nset)
     surf_created_top = addSurface(inp_file,"TOP",top_nset)
     surf_created_bot = addSurface(inp_file,"BOT",bot_nset)
-
-
-    # sel_df_top = lambda id_traj: df[id_traj].iloc[-1,1:].values
-    # sel_df_bot = lambda id_traj: df[id_traj].iloc[0 ,1:].values
-    
-
-    
-    # vec_list = [    sel_df_top(3) - sel_df_bot(0) ,
-    #                 sel_df_top(1) - sel_df_bot(2) ,
-    #                 sel_df_top(0) - sel_df_bot(3),
-    #                 sel_df_top(2) - sel_df_bot(1)
-    #                 ]
-    
-    # rep_nset_list = [bot_nset[0],
-    #                  bot_nset[2],
-    #                  bot_nset[3],
-    #                  bot_nset[1]
-    #                   ]
-    
-    # label_list     = ["BOT_1_rep",
-    #                   "BOT_3_rep",
-    #                   "BOT_4_rep",
-    #                   "BOT_2_rep"
-    #                   ]
-    
-    # glue_surf = [
-    #     surf_created_top[3],
-    #     surf_created_top[1],
-    #     surf_created_top[0],
-    #     surf_created_top[2]
-    # ]
-
-    # for k in range(4):
-    #     vec      = vec_list[k]
-    #     rep_nset = rep_nset_list[k]
-    #     label    = label_list[k]
-    #     glu      = glue_surf[k]
-
-    #     # create a nset with the new nodes
-    #     inset_rep = inp_file.CreateNsetCopy(rep_nset,label,vec)
-    #     # create a surface with the new nodes
-    #     node_surf = inp_file.Nset2SurfNode(inset_rep,"SURFACE_"+label)
-
-    #     inp_file.CreateTie("TIE_"+label,
-    #                        slave =node_surf.name,
-    #                        master=glu.name)
-
-    #     inp_file.AddEquation(rep_nset.name,inset_rep.name)
 
     return inp_file
 

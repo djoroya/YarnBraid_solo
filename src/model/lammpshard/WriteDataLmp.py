@@ -31,7 +31,6 @@ def WriteDataLmp(params,name_file):
     line = "\n\t" + str(Natoms) + " atoms\n"
     file.write(line)
     Nbonds = np.sum([trajs[i].shape[0]-1 for i in range(Ntrajs)])
-    Nbonds += (nhilos-1)*Npoints*16
     line = "\t"+str(Nbonds) + " bonds\n"
     file.write(line)
 
@@ -44,7 +43,7 @@ def WriteDataLmp(params,name_file):
     lines = "\t" + str(Ntrajs) + " atom types\n"
     file.write(lines)
 
-    lines = """    2 bond types
+    lines = """    1 bond types
         2 angle types
         0 dihedrals types
         0 impropers types
@@ -121,23 +120,6 @@ def WriteDataLmp(params,name_file):
             id_atom += 1
             id_bound += 1
         id_atom += 1
-
-    # Bond between the yarns
-    # Este enlace es entre los puntos de la diferentes fibras
-    # Mantiene 4 fibras juntas 
-    idx_160 = np.arange(0,Npoints,1)
-    for id in np.arange(0,len(trajs)-hilo_central,nhilos):
-        idx = np.arange(id,id+nhilos)
-        select_trajs = trajs[id:id+nhilos]
-        for id_pairs in range(nhilos-1):
-            id_izq = idx_160 + idx[id_pairs]*Npoints
-            id_der = idx_160 + idx[id_pairs+1]*Npoints
-
-            for j in range(Npoints):
-                line = str(id_bound) + " 2 " + str(id_izq[j]+1) + \
-                    " " + str(id_der[j]+1) + "\n"
-                file.write(line)
-                id_bound += 1
 
     # =======================================================
     # Angles

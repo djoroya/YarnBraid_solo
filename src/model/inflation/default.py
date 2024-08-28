@@ -4,6 +4,7 @@ from tools.step.common import stepsettings
 def default():
     p = stepsettings()
     p["pressure"]  = 300 # Pa
+    p["auto_pressure"] = False
     p["OMP_NUM_THREADS"]     = 16
     p["attemps"] = 4 # number of attemps
 

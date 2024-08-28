@@ -3,7 +3,9 @@ from model.default          import *
 
 import shutil,os
 
-from model.lammps.RunLammps         import RunLammps
+# from model.lammps.RunLammps         import RunLammps
+from model.lammpshard.RunLammps         import RunLammps
+
 from model.lsdyna.RunLSdyna         import RunLSdyna
 from model.Gmsh.RunGmsh             import RunGmsh
 from model.inflation.RunInflation   import RunInflation

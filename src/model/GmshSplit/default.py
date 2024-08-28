@@ -8,5 +8,6 @@ def default():
     p["debug"] = False
     p["refine"] = False
     p["lammps_path"] = ""
+    p["factor_length"] = 0.5
 
     return p

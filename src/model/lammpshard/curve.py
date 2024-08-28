@@ -1,5 +1,5 @@
 import numpy as np
-from model.lammps_hard.Remesh import Remesh
+from model.lammpshard.Remesh import Remesh
 
 sign_smooth = lambda x,eta: 2*(1/(1+np.exp(-eta*x)) - 0.5)
 
@@ -141,5 +141,10 @@ def curve(params):
 
     trajs = np.array(trajs)
     params["trajs"] = trajs
+
+    if  params["remove_final"]:
+        Nr = 5
+        params["trajs"] = trajs[:,:-Nr,:]
+        params["Npoints"] = trajs.shape[1]-Nr
 
     return params
