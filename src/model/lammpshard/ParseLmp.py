@@ -42,10 +42,10 @@ def ParseLmp(params,file):
 
     params["old_df"] = params["df"].copy()
 
-    epsilon_3d = 1e-4  # Ajusta este valor según tus necesidades
+    # epsilon_3d = 1e-4  # Ajusta este valor según tus necesidades
 
-    trajs = [ douglas_peucker_3d(itraj, epsilon_3d) 
-                 for itraj in trajs ]
+    # trajs = [ douglas_peucker_3d(itraj, epsilon_3d) 
+    #              for itraj in trajs ]
     # compute the distance between nodes
 
     params["df"] = traj2df(trajs)

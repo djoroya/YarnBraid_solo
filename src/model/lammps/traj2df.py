@@ -1,6 +1,9 @@
 import pandas as pd
 
 def traj2df(trajs):
+    # trajs: list of numpy arrays with shape (n,3)
+    # df = traj2df(trajs)
+    # df: pandas dataframe with columns ["type", "xu", "yu", "zu"]
     # deactivate warning
     df_list = []
     for i in range(len(trajs)):

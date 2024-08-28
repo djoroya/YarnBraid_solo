@@ -50,8 +50,8 @@ def RunGmshSplit(params,output_folder):
     for itraj in trajs:
         print("Trajectory ",iterations)
         iterations += 1
-        
-        inp_obj_loop = gmsh_mesh(itraj,r0,params)
+        debug = False
+        inp_obj_loop = gmsh_mesh(itraj,r0,params,debug=debug)
 
         inp_obj.append(inp_obj_loop)
 

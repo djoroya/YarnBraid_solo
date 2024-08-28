@@ -35,7 +35,8 @@ def RunInflationDirect(params,out_folder):
     df.columns = ["type","x","y","z"]
 
     
-    df = [ df[df["type"]==i] for i in np.unique(df["type"]) ]
+    df = [ df[df["type"]==i][["x","y","z"]].values 
+          for i in np.unique(df["type"]) ]
     df = [ df[i] for i in range(64)]
 
     # factor length gmsh_params["factor_length"]

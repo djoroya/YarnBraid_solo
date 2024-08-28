@@ -4,6 +4,7 @@ import numpy as np
 from model.InflationDirect.functions.addSurface import addSurface
 from settings.simulations import simulations
 from tools.basic.loadsavejson import savejson
+from model.lammps.traj2df import traj2df
 
 
 def have_first_point(isurf,inp_f,df):
@@ -32,7 +33,7 @@ def have_first_point(isurf,inp_f,df):
 def LoadInp(gmsh_params,df,params):
     # input: gmsh_params, df
     #  - gmsh_params: dict with the path of the inp files
-    #  - df: a list of dataframes 
+    #  - df: a list of numpy arrays with shape (n,3)e 
     # =============================================================================
     # Cargamos los paths de los  inp
     # =============================================================================
@@ -64,7 +65,7 @@ def LoadInp(gmsh_params,df,params):
             nodes    = inp_file.elements[id_traj].GetUniqueNodes(inp_file.nodes)
             id_nodes = nodes.index.values.copy()
             nodes = nodes.values.copy()
-            traj = df[id_traj][["x","y","z"]].values.copy()
+            traj = df[id_traj].copy()
 
             # cambio de variable a los nodos 
             # para que esten descritos en el sistema de coordenadas
@@ -118,7 +119,8 @@ def LoadInp(gmsh_params,df,params):
                 id_nearst = np.argmin(dist)
                 id_center = id_bot[id_nearst]
             except:
-                savejson({"data":nodes_rot},"params.json")
+                
+                savejson({"data":nodes_rot,"df":traj2df(df)},"error.json")
                 print("Error in LoadInp")
                 print("id_traj",id_traj)
             #from nodes 

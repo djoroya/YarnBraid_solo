@@ -10,7 +10,7 @@ join = os.path.join
 
 # ===============================================================
 
-def gmsh_mesh(trajs_gmsh,r0,params):
+def gmsh_mesh(trajs_gmsh,r0,params,debug=False):
 
     outfolder = params["output_folder"]
     
@@ -100,7 +100,10 @@ def gmsh_mesh(trajs_gmsh,r0,params):
 
     # list_index = list_index[:-1]
     
-    list_index[-1] = nlen-2
+    list_index = list_index[:-2]
+    # add nlen-1
+    list_index = np.append(list_index,nlen-1)
+
 
     iter = 0
     pipe_list = []
@@ -109,6 +112,8 @@ def gmsh_mesh(trajs_gmsh,r0,params):
         vec_z,disk,pipe = addpipe(trajs_gmsh[i:i+6],i*1000,iter,
                                             final=final,disk=disk)
        
+        if debug:
+            gmsh.fltk.run()
         if pipe is None:
             print("Error in pipe creation")
             if params["debug"]:

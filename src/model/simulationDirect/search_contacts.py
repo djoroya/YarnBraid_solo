@@ -15,20 +15,21 @@ def calcular_distancia_vectorizada(matriz_m, matriz_n):
 
     return distancia_minima
 
-def search_contacts(df,th=2.5):
-    # df es una lista de dataframes
+def search_contacts(df):
+
     def disttraj(i, j):
-        traj1 = df[i-1]
-        traj2 = df[j-1]
+        traj1 = df[i-1].values[:, 1:]
+        traj2 = df[j-1].values[:, 1:]
         distancia_minima = calcular_distancia_vectorizada(traj1, traj2)
         return distancia_minima
-    ntrajs = len(df)
-    contacts = list(itertools.combinations(range(1, ntrajs+1), 2))
+
+    contacts = list(itertools.combinations(range(1, 65), 2))
     contacts = [list(icontact) for icontact in contacts]
     dist_trajs = [disttraj(ic[0], ic[1]) for ic in contacts]
 
 
     contacts = np.array(contacts)
+    th = 2.5
     contacts = contacts[np.array(dist_trajs) < th]
     dist_trajs = np.array(dist_trajs)[np.array(dist_trajs) < th]
 
