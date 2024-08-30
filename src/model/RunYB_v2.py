@@ -3,7 +3,7 @@ from model.default          import *
 
 import os
 
-from model.lammps.RunLammps         import RunLammps
+from models.direct.lammpshard.RunLammps         import RunLammps
 from model.traj2mesh.RunTraj2Mesh   import RunTraj2Mesh
 from model.inflation.RunInflation   import RunInflation
 from model.simulation.RunSimulation import RunSimulation

@@ -3,14 +3,12 @@ from model.default          import *
 
 import shutil,os
 
-# from models.direct.lammpshard.RunLammps         import RunLammps
 from models.direct.lammpshard.RunLammps         import RunLammps
 
-from model.lsdyna.RunLSdyna         import RunLSdyna
 from model.Gmsh.RunGmsh             import RunGmsh
-from model.inflation.RunInflation   import RunInflation
-from model.simulation.RunSimulation import RunSimulation
-from model.post.RunPost             import RunPost
+from models.direct.InflationDirect.RunInflationDirect import RunInflationDirect
+from models.direct.simulationDirect.RunSimulation import RunSimulation
+from models.direct.postDirect.RunPost import RunPost
 import colorama
 from tools.step.runstep             import   runstep,address
 
@@ -21,7 +19,6 @@ def print_header(header):
 def RunYB(params,main_path,callback=None):
 
     out_lammps = [*main_path,"temp","lammps"     ]
-    out_lsdyna = [*main_path,"temp","lsdyna"     ]
     out_gmsh   = [*main_path,"temp","gmsh"       ]
     out_inflat = [*main_path,"temp","inflation"  ] 
     out_simula = [*main_path,"temp","simulation" ]
@@ -29,7 +26,6 @@ def RunYB(params,main_path,callback=None):
 
 
     params_lmp      = params["lammps_sim"]
-    params_lsdyna   = params["lsdyna_sim"]
     params_gmsh     = params["gmsh"]
     params_infl     = params["inflation"]
     params_simula   = params["simulation"]
@@ -46,38 +42,28 @@ def RunYB(params,main_path,callback=None):
     callback() if callback else None
     # =======================================
 
-    # STEP 2: Run lsdyna
-    print_header("Running lsdyna")
-    print_header("====================================")
 
-    params_lsdyna['lmp_path']  = params_lmp["simulation_path"]
-    params_lsdyna["settings_step"]["has_parent"] = True
-    RunLSdyna(params_lsdyna,out_lsdyna)
-    callback() if callback else None
-    # =======================================
-
-
-    # STEP 3: Run gmsh
+    # STEP 2: Run gmsh
     print_header("Running gmsh")
     print_header("====================================")
 
-    params_gmsh["lsdyna_path"] = params_lsdyna["simulation_path"]
+    params_gmsh["lammps_path"] = params_lmp["simulation_path"]
     params_gmsh["settings_step"]["has_parent"] = True
     RunGmsh(params_gmsh,out_gmsh)
     callback() if callback else None
     # =======================================
 
-    # STEP 4: Run inflation
+    # STEP 3: Run inflation
     print_header("Running inflation")
     print_header("====================================")
 
     params_infl["gmsh_path"]  =  params_gmsh["simulation_path"] 
     params_infl["settings_step"]["has_parent"] = True
-    RunInflation(params_infl,out_inflat)
+    RunInflationDirect(params_infl,out_inflat)
     callback() if callback else None
     # =======================================
 
-    # STEP 5: Run simulation
+    # STEP 4: Run simulation
     print_header("Running simulation")
     print_header("====================================")
 
@@ -87,7 +73,7 @@ def RunYB(params,main_path,callback=None):
     callback() if callback else None
     # =======================================
 
-    # STEP 6: Run post
+    # STEP 5: Run post
     print_header("Running post")
     print_header("====================================")
 
@@ -99,7 +85,6 @@ def RunYB(params,main_path,callback=None):
 
     depen = dict()
     depen["lmp_path"]     = params_lmp["simulation_path"]
-    depen["lsdyna_path"]  = params_lsdyna["simulation_path"]
     depen["gmsh_path"]    = params_gmsh["simulation_path"]
     depen["infl_path"]    = params_infl["simulation_path"]
     depen["tensile_path"] = params_simula["simulation_path"]

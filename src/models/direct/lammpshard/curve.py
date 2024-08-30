@@ -142,4 +142,9 @@ def curve(params):
     trajs = np.array(trajs)
     params["trajs"] = trajs
 
+    if  params["remove_final"]:
+        Nr = 5
+        params["trajs"] = trajs[:,:-Nr,:]
+        params["Npoints"] = trajs.shape[1]-Nr
+
     return params

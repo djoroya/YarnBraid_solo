@@ -1,7 +1,7 @@
 
-from model.lammps.default          import default as lmp_default
+from models.direct.lammpshard.default          import default as lmp_default
 from model.lsdyna.default          import default as lsdyna_default
-from model.lammps.RunLammps         import RunLammps
+from models.direct.lammpshard.RunLammps         import RunLammps
 from model.lsdyna.RunLSdyna  import RunLSdyna
 
 import os

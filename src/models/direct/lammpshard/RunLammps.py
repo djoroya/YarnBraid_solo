@@ -6,7 +6,6 @@ import os
 from tools.step.runstep import runstep,address
 import numpy as np
 from tools.lammps.run_lmp import run_lmp
-from models.direct.lammpshard.conse_dist import conse_dist
 import colorama
 
 
@@ -61,26 +60,10 @@ def RunLammps(params,output_folder,callback=None):
              "mpi":params["mpi"],
              "mpi_np":params["mpi_np"]}
     
-    if not params["recompute_dist"]:
-        error,cmd =run_lmp(simulation_path,**p_cpu)
-        params = ParseLmp(params,file="data.csv")
+    error,cmd =run_lmp(simulation_path,**p_cpu)
+    params = ParseLmp(params,file="data.csv")
 
-    else:
-        maxiter = 10
-        for i in range(maxiter):
-            error,cmd =run_lmp(simulation_path,**p_cpu)
-            params = ParseLmp(params,file="data.csv")
 
-            r = conse_dist(simulation_path,params["nhilos"])
-            params["percent_dist"] = r["percent"]
-            if r["percent"] < 20:
-                break
-            else:
-                print("Percent: ",r["percent"],"%")
-                print("Recomputing distance")
-                
-                params["recompute_factor"] = 1+1.25*(i/(maxiter-1))
-                params = WriteRunLmp(params,file)
     
     callback() if callback else None
 

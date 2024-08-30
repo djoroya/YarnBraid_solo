@@ -2,7 +2,6 @@
 import numpy as np
 #read lines
 import os
-from tools.trajs.douglas import douglas_peucker_3d
 from models.direct.lammpshard.traj2df   import traj2df
 import pandas as pd
 
@@ -37,23 +36,11 @@ def ParseLmp(params,file):
 
     trajs = [ df[df["type"] == i][["xu","yu","zu"]].values for i in df["type"].unique() ]
 
-    factor_length = 0.5
-
-    ntrajs = [ len(traj) for traj in trajs ]
-    id_trajs = [ int(ntraj*factor_length) for ntraj in ntrajs ]
-
-    trajs = [ traj[:id_traj] for traj, id_traj in zip(trajs, id_trajs) ]
-
     params["df"] = traj2df(trajs)
 
 
     params["old_df"] = params["df"].copy()
 
-    epsilon_3d = 1e-3  # Ajusta este valor según tus necesidades
-
-    trajs = [ douglas_peucker_3d(itraj, epsilon_3d) 
-                 for itraj in trajs ]
-    # compute the distance between nodes
 
     params["df"] = traj2df(trajs)
 

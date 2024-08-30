@@ -3,7 +3,7 @@ from model.default          import *
 
 import os
 
-from model.lammps.RunLammps         import RunLammps
+from models.direct.lammpshard.RunLammps         import RunLammps
 from model.lsdyna.RunLSdyna         import RunLSdyna
 from model.Gmsh.RunGmsh             import RunGmsh
 from model.inflation.RunInflation   import RunInflation

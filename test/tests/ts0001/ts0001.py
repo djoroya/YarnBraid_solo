@@ -1,6 +1,6 @@
 
-from model.lammps.default          import default
-from model.lammps.RunLammps         import RunLammps
+from models.direct.lammpshard.default          import default
+from models.direct.lammpshard.RunLammps         import RunLammps
 
 import os
 from tools.step.rerun import rerun
