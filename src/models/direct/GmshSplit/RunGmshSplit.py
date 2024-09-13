@@ -57,10 +57,6 @@ def RunGmshSplit(params,output_folder):
             rf_list = np.round(rf_list,5)
 
             trajs[i] = np.vstack([r0_list,trajs[i][1:-1],rf_list])
-            # to list
-            trajs[i] = trajs[i].tolist()
-            # to numpy
-            trajs[i] = np.array(trajs[i]) 
 
     # =============================================================================
     #ntrajs = [ len(traj) for traj in trajs ]

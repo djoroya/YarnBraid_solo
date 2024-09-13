@@ -25,7 +25,8 @@ def RunLammps(params,output_folder,callback=None):
     N     = params["nhilos"]
     rho   = params["r_hebra"]
     theta = params["theta"]
-    params["h"] = 16*N*rho/np.sin(np.pi/2 - theta)
+    th_hebra = params["th_hebra"]
+    params["h"] = 16*N*(rho+th_hebra)/np.sin(np.pi/2 - theta)
 
 
     if params["Npoints_density"] is not None:

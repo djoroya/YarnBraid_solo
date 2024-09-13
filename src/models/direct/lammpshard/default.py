@@ -21,6 +21,7 @@ def default():
     p["recompute_factor"] = 1
     p["Npoints_density"] = None # 
     p["remove_final"] = False
+    p["th_hebra"] = 0.0
     # ======================================================
     p["yukawa"] = dict()
     p["yukawa"]["A"] =  500.0

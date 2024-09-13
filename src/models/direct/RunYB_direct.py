@@ -5,7 +5,7 @@ import shutil,os
 
 from models.direct.lammpshard.RunLammps         import RunLammps
 
-from model.Gmsh.RunGmsh             import RunGmsh
+from models.direct.GmshSplit.RunGmshSplit import RunGmshSplit
 from models.direct.InflationDirect.RunInflationDirect import RunInflationDirect
 from models.direct.simulationDirect.RunSimulation import RunSimulation
 from models.direct.postDirect.RunPost import RunPost
@@ -49,7 +49,7 @@ def RunYB(params,main_path,callback=None):
 
     params_gmsh["lammps_path"] = params_lmp["simulation_path"]
     params_gmsh["settings_step"]["has_parent"] = True
-    RunGmsh(params_gmsh,out_gmsh)
+    RunGmshSplit(params_gmsh,out_gmsh)
     callback() if callback else None
     # =======================================
 
