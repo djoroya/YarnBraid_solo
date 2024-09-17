@@ -44,7 +44,35 @@ def addStep(inp_files,contacts,file,params):
                 line = line + TOP_NAME_NSET[i] + ",\n"
                 
         lines = lines + line
+    # ==============================================================================
+    # only braid yarns
+    for ils in list_str:
+    # 
+        BOT_NAME_NSET = [ inset.name for inset in inp_files.nsets 
+                        if "CIRC" not in inset.name
+                        if "BOT"+ils in inset.name ]
+        TOP_NAME_NSET = [ inset.name for inset in inp_files.nsets
+                        if "CIRC" not in inset.name
+                        if "TOP"+ils in inset.name ] 
+        
+        BOT_NAME_NSET = BOT_NAME_NSET[:64]
+        TOP_NAME_NSET = TOP_NAME_NSET[:64]
 
+        line = "\n*Nset, Nset = BOT_BRAID"+ils+"\n"
+        for i in range(len(BOT_NAME_NSET)):
+            if i == len(BOT_NAME_NSET)-1:
+                line = line + BOT_NAME_NSET[i] + "\n"
+            else:
+                line = line + BOT_NAME_NSET[i] + ",\n"
+
+        line = line + "*Nset, Nset = TOP_BRAID"+ils+"\n"
+        for i in range(len(TOP_NAME_NSET)):
+            if i == len(TOP_NAME_NSET)-1:
+                line = line + TOP_NAME_NSET[i] + "\n"
+            else:
+                line = line + TOP_NAME_NSET[i] + ",\n"
+                
+        lines = lines + line
     # ==============================================================================
     young    = 2960
     poisson  = 0.0
@@ -99,7 +127,7 @@ def addStep(inp_files,contacts,file,params):
     else:
         nlgemo=""
 
-
+    Nhilos = len(inp_files.elements)
     def gen_step(pressure):
         step_lines = """**
 **
@@ -110,14 +138,14 @@ def addStep(inp_files,contacts,file,params):
             
 
 
-        for i in range(64):
+        for i in range(Nhilos):
             prefix =  "P{}_".format(i+1) if i != 0 else ""
             line = "*Boundary\n"+prefix+"ESQUELETO_"+str(i+1)+", 1, 6, 0\n"
             step_lines = step_lines + line
 
         step_lines = step_lines + "*Cload, op=New\n"
 
-        for i in range(64):
+        for i in range(Nhilos):
             step_lines = step_lines + "*Dload\n"
             for j in range(4):
                 line = "ELSET_SURFACE_SURFACE_" + \

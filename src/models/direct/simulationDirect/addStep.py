@@ -17,6 +17,8 @@ def addStep(ls,nsets,params,displ):
 
     # ==============================================================================
     type_bc = params["type_bc"]
+    only_braid = params["only_braid"]
+    sufix = "_BRAID" if only_braid else ""
     # *** Boundary conditions ***
     # 1: BOT is fixed and TOP is displaced
     if not cylindrical:
@@ -24,8 +26,8 @@ def addStep(ls,nsets,params,displ):
         # BOT is fixed and TOP is displaced
         # TOP is displaced in z direction and x and y are fixed
         # ==============================================================================
-                ls.wt("*Boundary\nBOT, 1, 6, 0" )
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nBOT"+sufix+", 1, 6, 0" )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
 
         # 2: BOT is fixed and TOP is displaced
         # BOT is fixed and TOP is displaced
@@ -41,8 +43,8 @@ def addStep(ls,nsets,params,displ):
                 
                 nbot = len(bot_names)
 
-                ls.wt("*Boundary\nBOT, 1, 6, 0" )
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nBOT"+sufix+", 1, 6, 0" )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
                 
                 nfixed = params["nfixed"]
                 arr_nbot = np.arange(0,nbot,int(nbot/nfixed))
@@ -63,17 +65,17 @@ def addStep(ls,nsets,params,displ):
         # ==============================================================================
         elif type_bc == 4:
                 # Tiramos de los dos extremos sin fijar x ni y
-                ls.wt("*Boundary\nBOT, 3, 3, {}".format(displ/2) )
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ/2) )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, {}".format(displ/2) )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ/2) )
         # 5: BOT is fixed and TOP is displaced
         # BOT is fixed and TOP is displaced
         # ==============================================================================
         elif type_bc == 5:
                 # Tiramos de los dos extremos fixando x e y
-                ls.wt("*Boundary\nBOT, 3, 3, {}".format(displ) )
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
-                ls.wt("*Boundary\nBOT, 1, 2, 0" )
-                ls.wt("*Boundary\nTOP, 1, 2, 0" )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nBOT"+sufix+", 1, 2, 0" )
+                ls.wt("*Boundary\nTOP"+sufix+", 1, 2, 0" )
         else:
                 raise ValueError("type_bc not valid")
     else:
@@ -84,34 +86,34 @@ def addStep(ls,nsets,params,displ):
                 # r     = 0 is fixed, 
                 # theta is free,
                 # z     is fixed
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
-                ls.wt("*Boundary\nTOP, 1, 1, 0" )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nTOP"+sufix+", 1, 1, 0" )
                 # All nodes in BOT are fixed
-                ls.wt("*Boundary\nBOT, 1, 3, 0" )
+                ls.wt("*Boundary\nBOT"+sufix+", 1, 3, 0" )
 
         elif type_bc == 2:
                 # TOP
                 # r is free,
                 # theta is fixed,
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
-                ls.wt("*Boundary\nTOP, 2, 2, 0" )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nTOP"+sufix+", 2, 2, 0" )
                 # BOT
                 # r is free,
                 # theta is fixed,
                 # z is fixed
-                ls.wt("*Boundary\nBOT, 3, 3, 0" )
-                ls.wt("*Boundary\nBOT, 2, 2, 0" )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, 0" )
+                ls.wt("*Boundary\nBOT"+sufix+", 2, 2, 0" )
         elif type_bc == 3:
                # TOP
                # r is free,
                # theta is free,
                  # z is fixed
-                ls.wt("*Boundary\nTOP, 3, 3, {}".format(displ) )
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
                 # BOT
                 # r is free,
                 # theta is fixed,
                 # z is fixed
-                ls.wt("*Boundary\nBOT, 3, 3, 0" )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, 0" )
         else:
                 raise ValueError("type_bc not valid")
 

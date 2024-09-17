@@ -9,5 +9,6 @@ def default():
     p["refine"] = False
     p["lammps_path"] = ""
     p["factor_length"] = 0.5
+    p["Nalma"] = 15
 
     return p

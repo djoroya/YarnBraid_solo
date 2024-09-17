@@ -10,8 +10,7 @@ from models.direct.InflationDirect.RunInflationDirect import RunInflationDirect
 from models.direct.simulationDirect.RunSimulation import RunSimulation
 from models.direct.postDirect.RunPost import RunPost
 import colorama
-from tools.step.runstep             import   runstep,address
-
+from tools.step.runstep             import   runstep,address,lj
 def print_header(header):
     print(colorama.Fore.GREEN + header + colorama.Style.RESET_ALL)
 
@@ -38,7 +37,11 @@ def RunYB(params,main_path,callback=None):
     print_header("Running lammps")
     print_header("====================================")
     params_lmp["settings_step"]["has_parent"] = True
-    RunLammps(params_lmp,out_lammps)
+    if "simulation_path" in params_lmp:
+        params_lmp = lj(params_lmp["simulation_path"])
+    else:
+        RunLammps(params_lmp,out_lammps)
+
     callback() if callback else None
     # =======================================
 
@@ -49,7 +52,10 @@ def RunYB(params,main_path,callback=None):
 
     params_gmsh["lammps_path"] = params_lmp["simulation_path"]
     params_gmsh["settings_step"]["has_parent"] = True
-    RunGmshSplit(params_gmsh,out_gmsh)
+    if "simulation_path" in params_gmsh:
+        params_gmsh = lj(params_gmsh["simulation_path"])
+    else:
+        RunGmshSplit(params_gmsh,out_gmsh)
     callback() if callback else None
     # =======================================
 
@@ -59,7 +65,10 @@ def RunYB(params,main_path,callback=None):
 
     params_infl["gmsh_path"]  =  params_gmsh["simulation_path"] 
     params_infl["settings_step"]["has_parent"] = True
-    RunInflationDirect(params_infl,out_inflat)
+    if "simulation_path" in params_infl:
+        params_infl = lj(params_infl["simulation_path"])
+    else:
+        RunInflationDirect(params_infl,out_inflat)
     callback() if callback else None
     # =======================================
 
@@ -69,7 +78,10 @@ def RunYB(params,main_path,callback=None):
 
     params_simula["inflation_path"] = params_infl["simulation_path"]
     params_simula["settings_step"]["has_parent"] = True
-    RunSimulation(params_simula,out_simula)
+    if "simulation_path" in params_simula:
+        params_simula = lj(params_simula["simulation_path"])
+    else:
+        RunSimulation(params_simula,out_simula)
     callback() if callback else None
     # =======================================
 

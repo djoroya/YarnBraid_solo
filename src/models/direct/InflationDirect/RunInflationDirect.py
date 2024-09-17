@@ -37,7 +37,7 @@ def RunInflationDirect(params,out_folder):
     
     df = [ df[df["type"]==i][["x","y","z"]].values 
           for i in np.unique(df["type"]) ]
-    df = [ df[i] for i in range(64)]
+    df = [ df[i] for i in range(len(df))]
 
     # factor length gmsh_params["factor_length"]
 
@@ -54,7 +54,7 @@ def RunInflationDirect(params,out_folder):
     inp_file.print(file)
 
     radius = lammps_params["r_hebra"]
-    contacts = search_contacts(df,th = 6*radius)
+    contacts = search_contacts(df,th = 3*radius)
     # save the contacts
     params["contacts"] = contacts
 

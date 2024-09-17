@@ -9,7 +9,9 @@ def interp_section(ifrd_data,nsets,ndisk=10):
     # =====================================
     # Construir lista de nodos de cada hilo
     yarns_nodes = []
-    for i in range(64):
+    nyarns = len([ inset for inset in nsets.keys() if "YARN_" in inset ])
+
+    for i in range(nyarns):
         id_nodes = nsets["YARN_"+str(i+1)]
         id_nodes = np.unique(id_nodes)
         yarns_nodes.append(id_nodes)
@@ -17,11 +19,11 @@ def interp_section(ifrd_data,nsets,ndisk=10):
     yarns = []
 
     print("Interpolating section")
-    for id_yarn in tqdm(range(64)):
+    for id_yarn in tqdm(range(nyarns)):
 
         id_nodes = yarns_nodes[id_yarn]
 
-        fvalues = ifrd_data.loc[id_nodes]["P1"].values
+        fvalues = ifrd_data.loc[id_nodes]["P1"].values # Von Mises stress or P1
         xvalues = ifrd_data.loc[id_nodes]["x"].values
         yvalues = ifrd_data.loc[id_nodes]["y"].values
         zvalues = ifrd_data.loc[id_nodes]["z"].values

@@ -76,9 +76,13 @@ def build_inp(params):
         indx_step = indx_step[0]
         #      
         if params["cylindrical"]:
-            lines_trans =                "*TRANSFORM, NSET=BOT, TYPE=C\n"
+            if params["only_braid"]:
+                 sufix = "_BRAID"
+            else:
+                sufix = ""
+            lines_trans =                "*TRANSFORM, NSET=BOT"+sufix+", TYPE=C\n"
             lines_trans = lines_trans  + "0,0,0,0,0,1\n"	
-            lines_trans = lines_trans  + "*TRANSFORM, NSET=TOP, TYPE=C\n"
+            lines_trans = lines_trans  + "*TRANSFORM, NSET=TOP"+sufix+", TYPE=C\n"
             lines_trans = lines_trans  + "0,0,0,0,0,1\n"	
 
         else:

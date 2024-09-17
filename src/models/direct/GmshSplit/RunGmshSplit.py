@@ -4,6 +4,7 @@ import numpy as np
 from models.direct.GmshSplit.functions.genesq import genesq
 from models.direct.GmshSplit.functions.gmsh import gmsh_mesh
 from models.direct.lammpshard.traj2df import traj2df
+from models.direct.GmshSplit.createalma import createalma
 join = os.path.join
 
 
@@ -65,6 +66,11 @@ def RunGmshSplit(params,output_folder):
 
 
     trajs = [ trajs[i] for i in range(64)] #hardcoded 64 
+    zmax = np.max([np.max(traj[:,2]) for traj in trajs])
+    zmin = np.min([np.min(traj[:,2]) for traj in trajs])
+    almatrajs = createalma(params["Nalma"],zmin,zmax)
+    ## extend trajs
+    trajs.extend(almatrajs)
 
     params["trajs"] = traj2df(trajs)
 

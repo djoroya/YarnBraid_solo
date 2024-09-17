@@ -144,7 +144,7 @@ reset_timestep 0
 dump		1 all custom 1000 dump.xyz id type xu yu zu mol
 fix 1 all nvt temp 0.05 0.05 0.01
 fix 2 all deform 1 z erate VAR_ERRATE_Z
-timestep  0.0075
+timestep  0.02
 
 run RUN_STEPS_DEFORM
 
