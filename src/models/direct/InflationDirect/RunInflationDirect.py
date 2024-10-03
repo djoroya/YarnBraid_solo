@@ -45,7 +45,8 @@ def RunInflationDirect(params,out_folder):
     
     # puntos cercanos a las curvas no se pierdan puntos
     # df = df_respan(df)
-
+    params["h"] = lammps_params["h"]
+    params["all_bonds"] = lammps_params["all_bonds"]
     inp_file = LoadInp(gmsh_params,df,params)
 
     # inp_file.SetUniqueNodes()
@@ -54,9 +55,35 @@ def RunInflationDirect(params,out_folder):
     inp_file.print(file)
 
     radius = lammps_params["r_hebra"]
-    contacts = search_contacts(df,th = 3*radius)
-    # save the contacts
-    params["contacts"] = contacts
+    contacts = search_contacts(df,th = 4*radius)
+
+    if params["ties_activate"]:
+        ties = []
+        for i in np.arange(0,64,4):
+            for k in range(3):
+                ties.append([i+k+1,i+k+2])
+                print(i+k+1,i+k+2)
+
+        # save the contacts
+
+        contacts_set = {tuple(contact) for contact in contacts}
+        ties_set = {tuple(tie) for tie in ties}
+
+        # Eliminamos los pares que aparecen en ties de contacts usando diferencia de conjuntos
+        filtered_contacts_set = contacts_set - ties_set
+
+        # Convertimos el resultado de nuevo a lista para mostrar
+        filtered_contacts_set = list(filtered_contacts_set)
+        filtered_contacts_set.sort()
+        #tuples to list
+        filtered_contacts = [list(contact) for contact in filtered_contacts_set]
+
+        contacts = filtered_contacts
+
+        params["ties"] = np.array(ties)
+
+        
+    params["contacts"] = np.array(contacts)
 
     addStep(inp_file,contacts,file,params)
 

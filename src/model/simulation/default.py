@@ -25,4 +25,6 @@ def default():
     p["mpi"] = False # dynamic simulation
     p["mpi_np"] = 4 # dynamic simulation
     p["inflation_path"] = ""
+    p["only_braid"] = False
+
     return p

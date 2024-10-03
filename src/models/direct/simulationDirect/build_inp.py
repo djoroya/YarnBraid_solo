@@ -59,6 +59,68 @@ def build_inp(params):
         with open(inp_dir) as f:
             lines = f.readlines()
 
+        # ==============================================================================
+        # remove *EQUATION CARD
+        #for this find * in lines
+        # indx_card = [i for i, s in enumerate(lines)
+        #              if s.startswith('*')]
+        # # of this lines find *EQUATION CARD
+        # indx_eq = [i for i, s in enumerate(indx_card)
+        #            if lines[s].startswith('*EQUATION')]
+
+        # start = indx_card[indx_eq[0]]
+        # end   = indx_card[indx_eq[-1]+1]
+
+        # lines = lines[:start] + lines[end:]
+
+        # 
+        # bot_nset_rep = inp_f.select_regex(".*REP.*","nset")
+        bot_nset = inp_f.select_regex("BOT.*","nset")
+        bot_nset = bot_nset[:64]
+        top_nset = inp_f.select_regex("TOP.*","nset")
+        top_nset = top_nset[:64]
+
+        # top_center = inp_f.select_regex(".*TOP.*CENTER.*","nset")
+        # bot_center = inp_f.select_regex(".*BOT.*CENTER.*","nset")
+
+        # ==============================================================================
+        all_bonds = params_infl["all_bonds"]
+        for bond in all_bonds:
+
+            top_nset_master = top_nset[bond[0]-1]
+            # bot_nset_slave  = bot_nset_rep[bond[1]-1]
+            bot_nset_slave  = bot_nset[bond[1]-1]
+            
+            # inp_f.AddEquation(top_nset_master.name,
+            #                   bot_nset_slave.name ,
+            #                   type_eq="linear_interpolation",
+            #                   nodes=inp_f.nodes.df,
+            #                   dims=[1,2])
+
+        # ==============================================================================
+        midpoints = inp_f.select_regex("MID_POINTS","nset")
+
+        # inp_f.AddEquation(midpoints[0].name,
+        #                   midpoints[0].name,
+        #                   type_eq="set_center_mass",
+        #                   dims=[1,2])
+
+        # ==============================================================================
+        # New Nset
+        center_name = ["TOP","BOT"]
+        lines_nset = "\n"
+        for name in center_name:
+             
+            lines_nset = lines_nset+"*Nset, nset={}_CENTER\n".format(name)
+            for i in range(64):
+                lines_nset = lines_nset + "PCIRC_{}_{}_CENTER , ".format(name,i+1)
+                if (i+1)%10 == 0:
+                    lines_nset = lines_nset + "\n"
+            lines_nset = lines_nset + "\n"
+
+        lines_eq = [card.print()+"\n" for card in inp_f.equations]
+        # merge lines_eq with lines
+        # ==============================================================================
         # add adjust paramter in *Contact pair
         # "Type=Surface to surface" -> "Type=Surface to surface, Adjust={}"
         Adjust = params["Adjust"]
@@ -94,6 +156,22 @@ def build_inp(params):
             K = factor_E*params["young"]     
             line_replace    = line_replace + "\n{},0,0\n".format(K)
 
+        lines_midpoints_tranform = "*TRANSFORM, NSET=MID_POINTS, TYPE=C\n"
+        lines_midpoints_tranform = lines_midpoints_tranform + "0,0,0,0,0,1\n"
+
+        for i in range(64):
+            lines_midpoints_tranform = lines_midpoints_tranform +"*TRANSFORM, NSET=MID_POINT_{} , TYPE=C\n".format(i+1)
+            lines_midpoints_tranform = lines_midpoints_tranform + "0,0,0,0,0,1\n"
+
+        lines_tie = ""
+
+        if params_infl["ties_activate"]:
+            ties = params_infl["ties"]
+            for i in range(len(ties)):
+                lines_tie = lines_tie + "*Tie, Name=TIE_{}\n".format(i+1)
+                lines_tie = lines_tie + "SURFACE_{}, SURFACE_{}\n".format(ties[i][0],ties[i][1])
+
+
 
         # =========================================================================
         # Add step
@@ -105,7 +183,8 @@ def build_inp(params):
         nsets  = params_infl["nsets"]
         
         ls_list = []
-        first_di = 0.001*params["displacement"]
+        #first_di = 0.001*params["displacement"]
+        first_di = 0.1*params["displacement"]
         di_span = np.linspace(first_di,params["displacement"],nsteps*nruns)
         di_span = np.append(di_span,params["displacement"])
         iter = -1
@@ -150,8 +229,12 @@ def build_inp(params):
             lines_without_nodes[indx_surface_interaction[0]+1] = "\n"
             
         lines_with_new_nodes = [inp_f.nodes.print() , 
+                                lines_eq,
                                 lines_without_nodes, 
                                 lines_trans,
+                                lines_midpoints_tranform,
+                                lines_nset,
+                                lines_tie,
                                 ls_list[0].lines]
         # join lines
         lines_with_new_nodes = [item 

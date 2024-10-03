@@ -57,8 +57,16 @@ def RunPost(params,outfolder):
     printv("Interp section\n" + "-"*20)
 
 
-    TOP = [ nsets[iname] for iname in nsets.keys() if "TOP" in iname]
-    BOT = [ nsets[iname] for iname in nsets.keys() if "BOT" in iname]
+    TOP = [ nsets[iname] for iname in nsets.keys() 
+           if "TOP" in iname
+           if "CIRC" not in iname]
+    
+    
+    BOT = [ nsets[iname] for iname in nsets.keys() 
+           if "CIRC" not in iname
+           if "REP" not in iname
+           if "BOT" in iname]
+
     def getL(var,ifrd):
         TOP_pos = [ np.mean(ifrd.loc[iTOP][[var]].values,axis=0) 
                 for iTOP in TOP]

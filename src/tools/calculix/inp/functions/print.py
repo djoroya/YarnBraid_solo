@@ -9,10 +9,10 @@ def print(self, file):
                 self.elsets   +\
                 self.elsetsofelsets + \
                 self.surfaces + \
+                self.equations + \
                 self.ties + \
                 self.surface_interactions +\
                 self.contacts + \
-                self.equations + \
                 self.materials + \
                 self.solid_sections
 

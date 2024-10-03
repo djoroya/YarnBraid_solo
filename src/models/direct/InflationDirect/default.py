@@ -20,4 +20,5 @@ def default():
     p["nlgeom"] = True # nonlinear simulation
     p["gmsh_path"] = ""
     p["auto_pressure"] = False
+    p["ties_activate"] = False
     return p

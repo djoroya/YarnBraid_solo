@@ -12,7 +12,7 @@ def genesq(inp_files,df,radius=0.2):
         # refine the trajs
         #
         old_span = np.arange(0,trajs.shape[0])
-        new_span = np.linspace(0,trajs.shape[0]-1,500)
+        new_span = np.linspace(0,trajs.shape[0],500)
         #
         trajs = np.array([np.interp(new_span,old_span,trajs[:,i]) 
                           for i in range(trajs.shape[1])]).T
@@ -24,7 +24,7 @@ def genesq(inp_files,df,radius=0.2):
         dista_value = np.min(distances,axis=1)
         arg_value   = np.argmin(distances,axis=1)
         # aunque sea el minimo, este esta muy lejos
-        arg_value = arg_value[dista_value<(radius*0.25)]
+        arg_value = arg_value[dista_value<(radius*0.5)]
         id_nodes = id_nodes[arg_value]
         #
         id_nodes = np.unique(id_nodes)

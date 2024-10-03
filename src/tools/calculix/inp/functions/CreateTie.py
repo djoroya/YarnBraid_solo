@@ -6,8 +6,8 @@ def CreateTie(self,name,slave,master,type="surface"):
     if type not in ["surface","nset"]:
         raise Exception("type must be surface or nset")
 
-    master = self.select(master,"surface")
-    slave  = self.select(slave,type)
+    master = self.select(master.name,"surface")
+    slave  = self.select(slave.name,type)
 
     tie = TieCard(name,slave,master)
     self.cards = np.append(self.cards,tie)

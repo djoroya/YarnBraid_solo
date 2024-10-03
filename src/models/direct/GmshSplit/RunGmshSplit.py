@@ -29,8 +29,8 @@ def RunGmshSplit(params,output_folder):
 
     for i in range(len(trajs)):
         # cut trajs to Lz
-        bools = trajs[i][:,2] < Lz_mean + 0.5*Lz 
-        bools = bools & (trajs[i][:,2] > Lz_mean - 0.5*Lz)
+        bools = trajs[i][:,2] <= Lz_mean + 0.5*Lz 
+        bools = bools & (trajs[i][:,2] >= Lz_mean - 0.5*Lz)
         trajs[i] = trajs[i][bools,:].copy()
         
 
@@ -72,6 +72,15 @@ def RunGmshSplit(params,output_folder):
     ## extend trajs
     trajs.extend(almatrajs)
 
+
+    # # añadimos un penuultimo punto a cada trayectoria, este sera el punto medio entre el penultimo y el ultimo
+    # for k in range(1):
+    #     for i in range(len(trajs)):
+    #         penultimate_point = trajs[i][-2].copy()
+    #         last_point = trajs[i][-1].copy()
+    #         rmu = 0.1*penultimate_point + 0.9*last_point
+    #         trajs[i] = np.vstack([trajs[i][:-1],rmu,last_point])
+
     params["trajs"] = traj2df(trajs)
 
     params["MeshSizeMin"] = params["factor_mesh_min"]*r0
@@ -79,16 +88,33 @@ def RunGmshSplit(params,output_folder):
 
     inp_obj = []
     iterations = 1
-
+    list_index_l = []
     for itraj in trajs:
         print("Trajectory ",iterations)
         iterations += 1
         debug = False
-        inp_obj_loop = gmsh_mesh(itraj,r0,params,debug=debug)
+        inp_obj_loop,list_index = gmsh_mesh(itraj,r0,params,debug=debug)
 
         inp_obj.append(inp_obj_loop)
+        list_index_l.append(list_index)
 
 
+    for i in range(len(trajs)):
+        newtrajs = trajs[i].copy()
+
+        lastpoint = newtrajs[-1]
+        penultimo = newtrajs[-2]
+        newtrajs = newtrajs[:(list_index_l[i][-2]+1)]
+        newpenultimo = newtrajs[-1]
+
+        # create a list of points between lastpoint and newlastpoint 
+        npoints = 6
+        points = np.linspace(newpenultimo,penultimo,npoints)
+
+        trajs[i]  = np.vstack([newtrajs,points[1:],lastpoint])
+
+
+    params["trajs"] = traj2df(trajs)
 
     df = params["trajs"]
     df = [df.loc[df["type"]==i] for i in np.unique(df["type"])]

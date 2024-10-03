@@ -75,7 +75,17 @@ def addStep(ls,nsets,params,displ):
                 ls.wt("*Boundary\nBOT"+sufix+", 3, 3, {}".format(displ) )
                 ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ) )
                 ls.wt("*Boundary\nBOT"+sufix+", 1, 2, 0" )
-                ls.wt("*Boundary\nTOP"+sufix+", 1, 2, 0" )
+
+        # 6: TOP is displace
+        elif type_bc == 6:
+                # TOP is displaced in z direction and x and y are fixed
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ/2) )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, {}".format(-displ/2) )
+                # Fix one point in BOT
+                # PCIRC_TOP_48_CENTER
+                ls.wt("*Boundary\nTOP_1, 1, 2, 0" )
+                ls.wt("*Boundary\nTOP_16, 1, 2, 0" )
+
         else:
                 raise ValueError("type_bc not valid")
     else:
@@ -114,6 +124,24 @@ def addStep(ls,nsets,params,displ):
                 # theta is fixed,
                 # z is fixed
                 ls.wt("*Boundary\nBOT"+sufix+", 3, 3, 0" )
+
+        elif type_bc == 6:
+                # TOP is displaced in z direction and x and y are fixed
+                # ls.wt("*Boundary\nTOP_CENTER"+sufix+", 2, 2, 0")
+                # ls.wt("*Boundary\nBOT_CENTER"+sufix+", 2, 2, 0")
+
+                ls.wt("*Boundary\nTOP"+sufix+", 3, 3, {}".format(displ/2) )
+                ls.wt("*Boundary\nBOT"+sufix+", 3, 3, {}".format(-displ/2) )
+                ls.wt("*Boundary\nBOT_CENTER"+sufix+", 2, 2, 0")
+                ls.wt("*Boundary\nTOP_CENTER"+sufix+", 2, 2, 0")
+
+                # Fix one point in BOT
+                # PCIRC_TOP_48_CENTER
+                #topfix = np.arange(1,64,4)
+                #for i in topfix:
+                #        ls.wt("*Boundary\nTOP_"+str(i)+", 2, 2, 0" )
+                # ls.wt("*Boundary\nTOP"+sufix+", 2, 2, 0" )
+                # ls.wt("*Boundary\nMID_POINTS, 2, 2, 0" )
         else:
                 raise ValueError("type_bc not valid")
 

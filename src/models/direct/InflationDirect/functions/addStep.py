@@ -25,9 +25,15 @@ def addStep(inp_files,contacts,file,params):
     for ils in list_str:
     # 
         BOT_NAME_NSET = [ inset.name for inset in inp_files.nsets 
-                        if "BOT"+ils in inset.name ]
+                        if "BOT"+ils in inset.name 
+                        if "CIRC" not in inset.name
+                        if "_REP" not in inset.name ]
+                          
+                        
         TOP_NAME_NSET = [ inset.name for inset in inp_files.nsets 
-                        if "TOP"+ils in inset.name ]
+                        if "TOP"+ils in inset.name 
+                        if "CIRC" not in inset.name
+                        if "_REP" not in inset.name ]
 
         line = "\n*Nset, Nset = BOT"+ils+"\n"
         for i in range(len(BOT_NAME_NSET)):
@@ -50,9 +56,11 @@ def addStep(inp_files,contacts,file,params):
     # 
         BOT_NAME_NSET = [ inset.name for inset in inp_files.nsets 
                         if "CIRC" not in inset.name
+                        if "_REP" not in inset.name
                         if "BOT"+ils in inset.name ]
         TOP_NAME_NSET = [ inset.name for inset in inp_files.nsets
                         if "CIRC" not in inset.name
+                        if "_REP" not in inset.name
                         if "TOP"+ils in inset.name ] 
         
         BOT_NAME_NSET = BOT_NAME_NSET[:64]

@@ -4,6 +4,7 @@ import numpy as np
 import os
 from models.direct.lammpshard.traj2df   import traj2df
 import pandas as pd
+from models.direct.lammpshard.smooth_trajectory_fourier import smooth_trajectory_fourier
 
 def ParseLmp(params,file):
 
@@ -35,6 +36,7 @@ def ParseLmp(params,file):
     params["ParseLmp"] = file
 
     trajs = [ df[df["type"] == i][["xu","yu","zu"]].values for i in df["type"].unique() ]
+    trajs = [ smooth_trajectory_fourier(traj) for traj in trajs ]
 
     params["df"] = traj2df(trajs)
 

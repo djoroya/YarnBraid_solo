@@ -98,10 +98,17 @@ def LoadInp(gmsh_params,df,params):
             nodes_rot = np.dot(nodes - r0,R.T) 
 
             size_mesh = gmsh_params["MeshSizeMin"]
+            radius = 0.9*params["lammps_params"]["r_hebra"]*params["gmsh_params"]["factor_radius"]
+
+            bol_near = nodes_rot[:,0]**2 + nodes_rot[:,1]**2 + nodes_rot[:,2]**2 < 4*radius**2
+
             if ilabel == "BOT":
                 bol  = nodes_rot[:,1] < size_mesh/8
             else:
-                bol  = nodes_rot[:,1] > -size_mesh/8
+                bol  = nodes_rot[:,1] > -size_mesh/16
+            
+            bol = np.logical_and(bol,bol_near)
+
             bot = nodes_rot[bol,:]
             id_bot = id_nodes[bol]
 
@@ -109,7 +116,6 @@ def LoadInp(gmsh_params,df,params):
 
             r_mu = np.mean(bot,axis=0)
             dist = np.linalg.norm(bot-r_mu,axis=1)
-            radius = 0.9*params["lammps_params"]["r_hebra"]*params["gmsh_params"]["factor_radius"]
 
             id_circ = id_bot[dist>radius]
             inp_file.FromId2Nset(id_circ,"CIRC_"+ilabel+"_"+str(id_traj+1))
@@ -186,5 +192,77 @@ def LoadInp(gmsh_params,df,params):
     # inp_file.FromId2Nset 
     for i in range(len(df)):
         inp_file.FromId2Nset(id_nset_vols[i],"YARN_"+str(i+1))
+
+
+    # =============================================================================
+    # creamos nuevos nodos para cada BOT_i pero dezpladaos en z = h/8
+
+    vec = np.array([0,0,params["lammps_params"]["h"]*params["lammps_params"]["len_periodic"]]) # h/8
+
+    # bot_surf_rep = []
+    # bot_nset_rep = []
+    # for ibot in bot_nset:
+    #     label = ibot.name + "_REP"
+    #     inset_rep = inp_file.CreateNsetCopy(ibot,label,vec)
+    #     inset_rep_s = inp_file.Nset2SurfNode(inset_rep,"SURFACE_"+label)
+    #     bot_surf_rep.append(inset_rep_s)
+    #     bot_nset_rep.append(inset_rep)
+        # inp_file.AddEquation(inset_rep.name,ibot.name)
+    # ============================================================================
+
+
+    # 
+    # add new nodes to the inp file 
+    # for this 
+
+    all_bonds = params["all_bonds"]
+
+    for bond in all_bonds:
+        # top_surface_master = surf_created_top[bond[0]-1]
+        # bot_rep_slave      = bot_surf_rep[bond[1]-1]
+        # tie_label = "TIE_"+top_surface_master.name+"_"+bot_rep_slave.name
+        # inp_file.CreateTie(tie_label,
+        #                    slave =bot_rep_slave,
+        #                    master=top_surface_master,
+        #                    type="surface")
+        
+        top_nset_master = top_nset[bond[0]-1]
+        #bot_nset_slave  = bot_nset_rep[bond[1]-1]
+        bot_nset_slave  = bot_nset[bond[1]-1]
+        # inp_file.NsetProjection(top_nset_master.name,bot_nset_slave.name)
+        # nset1,nset2,type_eq="point2point"
+        # inp_file.AddEquation(top_nset_master.name,
+        #                      bot_nset_slave.name,
+        #                      type_eq="linear_interpolation",dims=[1,2],nodes=inp_file.nodes.df)
+
+    # =============================================================================
+    id_mid_inp_list = []
+    for w in range(len(df)):
+        itraj = df[w]
+
+        len_list = np.sqrt(np.sum(np.diff(itraj,axis=0)**2,axis=1))
+        cdist = np.cumsum(len_list)
+
+        cmid = cdist[-1]/2
+
+        ind_mid = np.argmin(np.abs(cdist-cmid))
+
+        mid_point = itraj[ind_mid]
+
+        # find id in inp_file.nodes.df
+        id_inp = inp_file.nodes.df.index.values
+        nodes = inp_file.elements[w].GetUniqueNodes(inp_file.nodes)
+        id_inp = nodes.index.values
+
+        distances = np.sum((mid_point - nodes)**2,axis=1)
+        id_mid_inp = id_inp[np.argmin(distances)]
+        inp_file.FromId2Nset([id_mid_inp],"MID_POINT_"+str(w+1))
+
+        id_mid_inp_list.append(id_mid_inp)
+        # create a nset with the mid point
+    inp_file.FromId2Nset(id_mid_inp_list,"MID_POINTS")
+
+
+
     return inp_file
 

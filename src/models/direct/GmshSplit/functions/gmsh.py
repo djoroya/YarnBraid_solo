@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import gmsh
 from tools.calculix.inp.inp import inp
+from models.direct.GmshSplit.functions.addpipe import addpipe
 import pandas as pd
 import os
 
@@ -25,69 +26,6 @@ def gmsh_mesh(trajs_gmsh,r0,params,debug=False):
     gmsh.option.setNumber("Mesh.Algorithm", 2)
 
     rd = r0
-
-    def addpipe(trajs_gmsh,id,iter,final=False,disk=None,type_sweep="DiscreteTrihedron"):
-
-        npts = len(trajs_gmsh)
-
-        for i in range(npts):
-            gmsh.model.occ.addPoint(trajs_gmsh[i][0], 
-                                    trajs_gmsh[i][1], 
-                                    trajs_gmsh[i][2], rd, i+1+id)
-
-
-        list_points = [i+1+id for i in range(npts)]
-        gmsh.model.occ.addSpline(list_points, 1 + id)
-        gmsh.model.occ.addWire([1 + id], 1 + id)
-
-        if final:
-            vecz = final
-        else:
-            vecz = [trajs_gmsh[1][0] - trajs_gmsh[0][0], 
-                    trajs_gmsh[1][1] - trajs_gmsh[0][1], 
-                    trajs_gmsh[1][2] - trajs_gmsh[0][2]]
-            # vecz = vecz/np.linalg.norm(vecz)
-        
-
-        vecz_final = [trajs_gmsh[-1][0] - trajs_gmsh[-2][0],
-                    trajs_gmsh[-1][1] - trajs_gmsh[-2][1],
-                    trajs_gmsh[-1][2] - trajs_gmsh[-2][2]]
-        
-        # vecz_final = trajs_gmsh[-1] - trajs_gmsh[-2]
-        # vecz_final = vecz_final/np.linalg.norm(vecz_final)
-        
-        # points init 
-        if final is None:
-
-            disk = gmsh.model.occ.addDisk(trajs_gmsh[0][0],
-                                          trajs_gmsh[0][1], 
-                                          trajs_gmsh[0][2], 
-                                rd, rd, 2+id,zAxis=vecz)
-
-            gmsh.model.occ.synchronize()
-            try:
-                pipe= gmsh.model.occ.addPipe([(2, 2+id)], 
-                                            1+id, type_sweep)
-            except:
-                print("Error in pipe creation")
-                print("iter: ",iter)
-                pipe = None
-        else:
-            try:
-                pipe = gmsh.model.occ.addPipe([(2, 5+(iter-1)*3)], 
-                                        1+id, type_sweep)
-            except:
-                print("Error in pipe creation")
-                print("iter: ",iter)
-                pipe = None
-                raise ValueError("Error in pipe creation")
-
-
-            gmsh.model.occ.remove([(2, 5+(iter-1)*3)])
-        
-            gmsh.model.occ.synchronize()
-
-        return vecz_final,disk,pipe
 
 
 
@@ -118,7 +56,7 @@ def gmsh_mesh(trajs_gmsh,r0,params,debug=False):
     for i in  list_index[:-1]:
 
         vec_z,disk,pipe = addpipe(trajs_gmsh[i:i+6],i*1000,iter,
-                                            final=final,disk=disk)
+                                            final=final,disk=disk,rd=rd)
        
         if debug:
             gmsh.fltk.run()
@@ -219,7 +157,7 @@ def gmsh_mesh(trajs_gmsh,r0,params,debug=False):
     # print("MaxMesh : ",params["MeshSizeMax"])
     gmsh.option.setNumber('Mesh.MeshSizeMin', params["MeshSizeMin"])
     gmsh.option.setNumber('Mesh.MeshSizeMax', params["MeshSizeMax"])
-    gmsh.option.setNumber("Mesh.MeshSizeFromCurvature", 50)
+    gmsh.option.setNumber("Mesh.MeshSizeFromCurvature", 100)
     gmsh.option.setNumber("Mesh.Optimize", 1)  # Optimizar la malla
     gmsh.option.setNumber("Mesh.OptimizeNetgen", 1)  # Utilizar Netgen para optimización
 
@@ -339,5 +277,5 @@ def gmsh_mesh(trajs_gmsh,r0,params,debug=False):
 
     inp_obj.reset_cards()
 
-    return inp_obj
+    return inp_obj,list_index
 

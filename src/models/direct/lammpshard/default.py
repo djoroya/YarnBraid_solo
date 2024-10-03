@@ -22,6 +22,9 @@ def default():
     p["Npoints_density"] = None # 
     p["remove_final"] = False
     p["th_hebra"] = 0.0
+    p["only_small"] = False
+
+    p["len_periodic"] = 1/8
     # ======================================================
     p["yukawa"] = dict()
     p["yukawa"]["A"] =  500.0

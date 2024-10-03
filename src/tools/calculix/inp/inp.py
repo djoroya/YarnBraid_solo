@@ -23,7 +23,7 @@ from tools.calculix.inp.functions.remove_lib             import *
 from tools.calculix.inp.functions.Nset2SurfNode          import Nset2SurfNode
 from tools.calculix.inp.functions.FromId2Nset            import FromId2Nset
 from tools.calculix.inp.functions.plots                  import *
-from model.inflation.plane_svd import plane_svd
+from model.inflation.plane_svd import plane_svd,plane_alinear
 import pandas as pd
 
 class inp:
@@ -100,8 +100,8 @@ class inp:
     def Nset2SurfNode(self,id_values_list,name=None):
         return Nset2SurfNode(self,id_values_list,name=name)
     # ===========================================
-    def AddEquation(self,nset1,nset2,type_eq="point2point",dims=[1,2,3]):
-        return AddEquation(self,nset1,nset2,type_eq=type_eq,dims=dims)
+    def AddEquation(self,nset1,nset2,type_eq="point2point",dims=[1,2,3],nodes=None):
+        return AddEquation(self,nset1,nset2,type_eq=type_eq,dims=dims,nodes=nodes)
     # ===========================================
     def FromElement2Nset(self,index_el,name=None):
         return FromElement2Nset(self,index_el,name=name)
@@ -176,26 +176,26 @@ class inp:
         self.nodes.df[["x","y","z"]] = self.nodes.df[["x","y","z"]]*factor
         return self
     
-    def NsetProjection(self,bot_1_str,clone_top_4_str):
+    def NsetProjection(self,nset_1_str,nset_2_str):
 
-        bot_1       = self.select(bot_1_str      , "nset")
-        clone_top_4 = self.select(clone_top_4_str, "nset")
+        nset_1 = self.select(nset_1_str, "nset")
+        nset_2 = self.select(nset_2_str, "nset")
 
         id_nodes = []
-        id_nodes.extend(bot_1.id_nodes)
-        id_nodes.extend(clone_top_4.id_nodes)
+        id_nodes.extend(nset_1.id_nodes)
+        id_nodes.extend(nset_2.id_nodes)
 
         df = self.nodes.df
         select_df = df.loc[id_nodes].copy()
 
         puntos_proyectados, _ = plane_svd(select_df.values)
 
-        new_points_bot_1       = puntos_proyectados[:len(bot_1.id_nodes)]
-        new_points_clone_top_4 = puntos_proyectados[len(bot_1.id_nodes):]
+        new_points_1 = puntos_proyectados[:len(nset_1.id_nodes)]
+        new_points_2 = puntos_proyectados[len(nset_1.id_nodes):]
 
         # update nodes
-        df.loc[bot_1.id_nodes] = new_points_bot_1
-        df.loc[clone_top_4.id_nodes] = new_points_clone_top_4
+        df.loc[nset_1.id_nodes] = new_points_1
+        df.loc[nset_2.id_nodes] = new_points_2
 
     def CreateNsetCopy(inp_file,rep_nset,label,vec):
         nodes_df    = inp_file.nodes.df.loc[rep_nset.id_nodes]
